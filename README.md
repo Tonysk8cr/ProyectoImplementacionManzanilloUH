@@ -11,15 +11,15 @@
 
 ## Integrantes
 
-- Miguel Ángel Arias Duran
-- Alois Johann Buschor Obando
-- Dilan Alexis Durán Díaz
-- Yudi Mariel Fallas Calderón
-- Santiago Fonseca Chinchilla
-- Mavio Sebastián Ramírez Segnini
-- Daniel Sánchez Azofeifa
-- Sebastián Vega Castillo
-- Anthony Emanuel Villalobos Hidalgo
+- Miguel Ángel Arias Duran | [https://github.com/winflip27]
+- Alois Johann Buschor Obando | [https://github.com/ajbuschor]
+- Dilan Alexis Durán Díaz | [https://github.com/ddurandiaz3d]
+- Yudi Mariel Fallas Calderón | [https://github.com/yfallas02]
+- Santiago Fonseca Chinchilla | [https://github.com/Siggy1604]
+- Mavio Sebastián Ramírez Segnini | [https://github.com/Mavio2006]
+- Daniel Sánchez Azofeifa | [https://github.com/danisanchez23]
+- Sebastián Vega Castillo | [https://github.com/Sebas10CR]
+- Anthony Emanuel Villalobos Hidalgo | [https://github.com/Tonysk8cr]
 
 ---
 
