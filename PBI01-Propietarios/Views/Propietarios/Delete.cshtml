@@ -1,0 +1,19 @@
+@model Propietario
+@{
+    ViewData["Title"] = "Eliminar propietario";
+}
+
+<div class="form-card">
+    <h1>Eliminar propietario</h1>
+    <p class="lead">
+        ¿Seguro que quieres eliminar a <strong>@Model.NombreCompleto</strong> (identificación @Model.Identificacion)?
+    </p>
+
+    <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+        <button type="submit" class="btn btn-block" style="background:var(--danger); color:#fff;">Sí, eliminar</button>
+    </form>
+
+    <p class="lead" style="margin-top:1rem; text-align:center;">
+        <a asp-action="Index">Cancelar</a>
+    </p>
+</div>
