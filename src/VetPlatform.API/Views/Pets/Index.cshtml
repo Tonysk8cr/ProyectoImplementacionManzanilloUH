@@ -1,0 +1,35 @@
+@model IReadOnlyList<VetPlatform.Application.Features.Clinical.PetDto>
+@{
+    ViewData["Title"] = "Mis mascotas";
+}
+
+<div class="page-header">
+    <div>
+        <h1>Mis mascotas</h1>
+        <p class="lead">Mascotas registradas a tu nombre.</p>
+    </div>
+    <a class="btn btn-primary" asp-action="Create">Registrar mascota</a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="empty-state">
+        <p>Todavía no registraste ninguna mascota.</p>
+        <a class="btn btn-primary" asp-action="Create">Registrar la primera mascota</a>
+    </div>
+}
+else
+{
+    <div class="grid">
+        @foreach (var pet in Model)
+        {
+            <div class="card">
+                <h2 class="card-title">@pet.Name</h2>
+                <p class="card-subtitle">
+                    @pet.Species@(string.IsNullOrWhiteSpace(pet.Breed) ? "" : $" · {pet.Breed}")
+                </p>
+                <a class="btn btn-primary" asp-action="Details" asp-route-id="@pet.Id">Ver detalle</a>
+            </div>
+        }
+    </div>
+}

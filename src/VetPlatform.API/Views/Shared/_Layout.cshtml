@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Plataforma Veterinaria</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="site-header">
+        <nav class="navbar container">
+            <a class="brand" asp-controller="Home" asp-action="Index">🐾 VetPlatform</a>
+
+            <div class="nav-links">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a asp-controller="Pets" asp-action="Index">Mis mascotas</a>
+                    <span class="nav-user">@User.Identity.Name</span>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="inline-form">
+                        <button type="submit" class="btn btn-link">Cerrar sesión</button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login">Iniciar sesión</a>
+                    <a asp-controller="Account" asp-action="Register" class="btn btn-primary">Registrarse</a>
+                }
+            </div>
+        </nav>
+    </header>
+
+    <main class="container main-content">
+        @if (TempData["SuccessMessage"] is string success)
+        {
+            <div class="alert alert-success" role="status">@success</div>
+        }
+
+        @RenderBody()
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            Plataforma Centralizada de Servicios Veterinarios · INFO-117 · Sprint 1
+        </div>
+    </footer>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
