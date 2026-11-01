@@ -1,0 +1,43 @@
+@model VetPlatform.API.ViewModels.PetViewModel
+@{
+    ViewData["Title"] = "Registrar mascota";
+}
+
+<div class="form-card">
+    <h1>Registrar mascota</h1>
+    <p class="lead">Completa la ficha básica. La asociación con tu perfil se hace automáticamente.</p>
+
+    <form asp-action="Create" method="post" novalidate>
+        <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+        <div class="form-group">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" />
+            <span asp-validation-for="Name" class="field-validation-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Species"></label>
+            <input asp-for="Species" placeholder="Ej.: perro, gato, conejo" />
+            <span asp-validation-for="Species" class="field-validation-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Breed"></label>
+            <input asp-for="Breed" />
+            <span asp-validation-for="Breed" class="field-validation-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="BirthDate"></label>
+            <input asp-for="BirthDate" type="date" />
+            <span asp-validation-for="BirthDate" class="field-validation-error"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Guardar mascota</button>
+    </form>
+
+    <p class="lead" style="margin-top:1rem; text-align:center;">
+        <a asp-action="Index">Volver a mis mascotas</a>
+    </p>
+</div>
