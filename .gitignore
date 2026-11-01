@@ -218,3 +218,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+.vs/
+[Bb]in/
+[Oo]bj/
+*.user
