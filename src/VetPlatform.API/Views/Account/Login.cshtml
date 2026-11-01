@@ -1,0 +1,38 @@
+@model VetPlatform.API.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Iniciar sesión";
+}
+
+<div class="form-card">
+    <h1>Iniciar sesión</h1>
+    <p class="lead">Accede con tu correo y contraseña.</p>
+
+    <form asp-action="Login" method="post" novalidate>
+        <input type="hidden" asp-for="ReturnUrl" />
+
+        <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+        <div class="form-group">
+            <label asp-for="Email"></label>
+            <input asp-for="Email" type="email" autocomplete="email" />
+            <span asp-validation-for="Email" class="field-validation-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Password"></label>
+            <input asp-for="Password" autocomplete="current-password" />
+            <span asp-validation-for="Password" class="field-validation-error"></span>
+        </div>
+
+        <div class="checkbox-group">
+            <input asp-for="RememberMe" />
+            <label asp-for="RememberMe"></label>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+    </form>
+
+    <p class="lead" style="margin-top:1rem; text-align:center;">
+        ¿No tienes cuenta? <a asp-action="Register">Regístrate</a>
+    </p>
+</div>

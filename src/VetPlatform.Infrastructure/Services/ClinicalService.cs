@@ -46,6 +46,14 @@ public class ClinicalService : IClinicalService
         return Result<T>.Forbidden("No tiene autorización sobre este expediente.");
     }
 
+    public async Task<Result<IReadOnlyList<PetDto>>> GetMyPetsAsync(CancellationToken ct = default)
+    {
+        if (_user.UserId is not { } actor)
+            return Result<IReadOnlyList<PetDto>>.Fail(ErrorType.Unauthorized, "Debe iniciar sesión.");
+        var pets = await _pets.GetByOwnerAsync(actor, ct);
+        return Result<IReadOnlyList<PetDto>>.Ok(pets.Select(p => p.ToDto()).ToList());
+    }
+
     public async Task<Result<PetDto>> CreatePetAsync(CreatePetCommand cmd, CancellationToken ct = default)
     {
         if (_user.UserId is not { } actor || !_user.IsInRole(UserRole.PetOwner) || cmd.OwnerId != actor)

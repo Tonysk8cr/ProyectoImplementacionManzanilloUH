@@ -14,6 +14,14 @@ public class ExceptionHandlingMiddleware
         try { await _next(ctx); }
         catch (Exception ex)
         {
+            // Las rutas /api (módulos que aún exponen JSON) devuelven ProblemDetails;
+            // el resto de rutas pertenece a las vistas MVC y se relanza para que lo manejen
+            // UseExceptionHandler (producción) o UseDeveloperExceptionPage (desarrollo).
+            if (!ctx.Request.Path.StartsWithSegments("/api"))
+            {
+                throw;
+            }
+
             var (status, title) = ex switch
             {
                 ResourceNotFoundException => (StatusCodes.Status404NotFound, "NotFound"),
