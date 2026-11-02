@@ -1,0 +1,462 @@
+/* Estilos generales de la plataforma (Sprint 1 — vistas MVC). */
+
+:root {
+    --primary: #2b6cb0;
+    --primary-dark: #1a4e83;
+    --success: #2f855a;
+    --danger: #c53030;
+    --text: #2d3748;
+    --muted: #718096;
+    --border: #e2e8f0;
+    --bg: #f7fafc;
+    --card-bg: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+.container {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* ---------- Cabecera ---------- */
+
+.site-header {
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border);
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.9rem;
+    padding-bottom: 0.9rem;
+}
+
+.brand {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.nav-links a {
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+
+.nav-links a:hover {
+    color: var(--primary);
+}
+
+.nav-user {
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.inline-form {
+    display: inline;
+    margin: 0;
+}
+
+/* ---------- Contenido ---------- */
+
+.main-content {
+    flex: 1;
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+h1 {
+    font-size: 1.6rem;
+    margin: 0;
+}
+
+h2 {
+    font-size: 1.2rem;
+    margin: 2rem 0 1rem;
+}
+
+.lead {
+    color: var(--muted);
+    margin-top: 0.4rem;
+}
+
+/* ---------- Tarjetas ---------- */
+
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.card-title {
+    margin: 0 0 0.4rem;
+    font-size: 1.05rem;
+}
+
+.card-subtitle {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin: 0 0 0.8rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+}
+
+/* ---------- Tablas ---------- */
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table th,
+.table td {
+    text-align: left;
+    padding: 0.7rem 0.9rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.93rem;
+}
+
+.table th {
+    background: #edf2f7;
+    font-weight: 600;
+}
+
+.table tr:last-child td {
+    border-bottom: none;
+}
+
+/* ---------- Formularios ---------- */
+
+.form-card {
+    max-width: 460px;
+    margin: 0 auto;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.75rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.35rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: -1px;
+    border-color: var(--primary);
+}
+
+.field-hint {
+    color: var(--muted);
+    font-size: 0.82rem;
+    margin-top: 0.25rem;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.checkbox-group input {
+    width: auto;
+}
+
+.checkbox-group label {
+    font-weight: 400;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* ---------- Botones ---------- */
+
+.btn {
+    display: inline-block;
+    padding: 0.55rem 1.1rem;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    background: #edf2f7;
+    color: var(--text);
+}
+
+.btn:hover {
+    filter: brightness(0.96);
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+    filter: none;
+}
+
+.btn-success {
+    background: var(--success);
+    color: #fff;
+}
+
+.btn-block {
+    display: block;
+    width: 100%;
+}
+
+.btn-link {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.btn-link:hover {
+    text-decoration: underline;
+    filter: none;
+}
+
+/* ---------- Alertas ---------- */
+
+.alert {
+    padding: 0.8rem 1rem;
+    border-radius: 6px;
+    margin-bottom: 1.25rem;
+    font-size: 0.94rem;
+    border: 1px solid transparent;
+}
+
+.alert-success {
+    background: #f0fff4;
+    border-color: #9ae6b4;
+    color: #22543d;
+}
+
+.alert-danger {
+    background: #fff5f5;
+    border-color: #feb2b2;
+    color: #742a2a;
+}
+
+.alert ul {
+    margin: 0.3rem 0 0;
+    padding-left: 1.1rem;
+}
+
+/* ---------- Validación ---------- */
+
+.validation-summary {
+    background: #fff5f5;
+    border: 1px solid #feb2b2;
+    color: #742a2a;
+    border-radius: 6px;
+    padding: 0.7rem 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+/* Solo se muestra cuando hay errores (la tag helper alterna estas clases). */
+.validation-summary-valid {
+    display: none;
+}
+
+.validation-summary ul {
+    margin: 0.3rem 0 0;
+    padding-left: 1.1rem;
+}
+
+.field-validation-error {
+    color: var(--danger);
+    font-size: 0.83rem;
+    display: block;
+    margin-top: 0.25rem;
+}
+
+.input-validation-error {
+    border-color: var(--danger) !important;
+}
+
+/* ---------- Detalle de mascota ---------- */
+
+.detail-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.9rem;
+    margin: 0;
+}
+
+.detail-list div {
+    border-left: 3px solid var(--primary);
+    padding-left: 0.7rem;
+}
+
+.detail-list dt {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+}
+
+.detail-list dd {
+    margin: 0.2rem 0 0;
+    font-weight: 600;
+}
+
+.consultation {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.9rem;
+    background: var(--card-bg);
+}
+
+.consultation-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+
+.consultation-header strong {
+    font-size: 1rem;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    background: #ebf8ff;
+    color: #2b6cb0;
+}
+
+.badge-success {
+    background: #f0fff4;
+    color: var(--success);
+}
+
+.subsection {
+    margin-top: 0.8rem;
+    padding-top: 0.7rem;
+    border-top: 1px dashed var(--border);
+}
+
+.subsection h4 {
+    margin: 0 0 0.4rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+}
+
+.subsection ul {
+    margin: 0;
+    padding-left: 1.1rem;
+    font-size: 0.9rem;
+}
+
+/* ---------- Estado vacío ---------- */
+
+.empty-state {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    background: var(--card-bg);
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+}
+
+.empty-state p {
+    margin: 0 0 1rem;
+}
+
+/* ---------- Footer ---------- */
+
+.site-footer {
+    background: var(--card-bg);
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.85rem;
+    padding: 1rem 0;
+}
+
+@media (max-width: 600px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

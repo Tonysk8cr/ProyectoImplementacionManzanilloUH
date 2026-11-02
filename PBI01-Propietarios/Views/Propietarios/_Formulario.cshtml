@@ -1,0 +1,33 @@
+@model Propietario
+
+<div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+<div class="form-group">
+    <label asp-for="NombreCompleto"></label>
+    <input asp-for="NombreCompleto" autocomplete="name" />
+    <span asp-validation-for="NombreCompleto" class="field-validation-error"></span>
+</div>
+
+<div class="form-group">
+    <label asp-for="Identificacion"></label>
+    <input asp-for="Identificacion" autocomplete="off" />
+    <span asp-validation-for="Identificacion" class="field-validation-error"></span>
+</div>
+
+<div class="form-group">
+    <label asp-for="Correo"></label>
+    <input asp-for="Correo" type="email" autocomplete="email" />
+    <span asp-validation-for="Correo" class="field-validation-error"></span>
+</div>
+
+<div class="form-group">
+    <label asp-for="Telefono"></label>
+    <input asp-for="Telefono" type="tel" autocomplete="tel" placeholder="Ej.: 8888 8888" />
+    <span asp-validation-for="Telefono" class="field-validation-error"></span>
+</div>
+
+<div class="form-group">
+    <label asp-for="Direccion"></label>
+    <input asp-for="Direccion" autocomplete="street-address" />
+    <span asp-validation-for="Direccion" class="field-validation-error"></span>
+</div>
