@@ -13,6 +13,7 @@ using VetPlatform.Application.Features.Emergency;
 using VetPlatform.Application.Features.Identity;
 using VetPlatform.Application.Features.Marketplace;
 using VetPlatform.Application.Features.Organizations;
+using VetPlatform.Application.Features.Owners;
 using VetPlatform.Application.Features.Scheduling;
 using VetPlatform.Domain.Interfaces.Repositories;
 using VetPlatform.Infrastructure.Data;
@@ -77,6 +78,8 @@ public static class DependencyInjection
         services.AddScoped<IClinicRepository, ClinicRepository>();
         services.AddScoped<IStoreRepository, StoreRepository>();
         services.AddScoped<IPetRepository, PetRepository>();
+        services.AddScoped<IOwnerProfileRepository, OwnerProfileRepository>();
+        services.AddScoped<IOwnerService, OwnerService>();
         services.AddScoped<IClinicalRecordRepository, ClinicalRecordRepository>();
         services.AddScoped<IConsultationRepository, ConsultationRepository>();
         services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();

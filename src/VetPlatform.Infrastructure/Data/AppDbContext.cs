@@ -22,6 +22,7 @@ public class AppDbContext : DbContext
     public DbSet<ClinicMember> ClinicMembers => Set<ClinicMember>();
     public DbSet<Store> Stores => Set<Store>();
     public DbSet<Pet> Pets => Set<Pet>();
+    public DbSet<OwnerProfile> OwnerProfiles => Set<OwnerProfile>();
     public DbSet<ClinicalRecord> ClinicalRecords => Set<ClinicalRecord>();
     public DbSet<AttendingVetRelationship> AttendingVetRelationships => Set<AttendingVetRelationship>();
     public DbSet<Consultation> Consultations => Set<Consultation>();
