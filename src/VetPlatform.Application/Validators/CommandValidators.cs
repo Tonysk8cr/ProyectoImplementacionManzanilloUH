@@ -15,6 +15,14 @@ public class RegisterUserCommandValidator : AbstractValidator<RegisterUserComman
         RuleFor(x => x.Password).NotEmpty().MinimumLength(8).Matches("[A-Z]").Matches("[0-9]")
             .WithMessage("La contraseña debe tener al menos 8 caracteres, una mayúscula y un número.");
         RuleFor(x => x.FullName).NotEmpty().MaximumLength(200);
+        // Datos mínimos del propietario (PBI-01).
+        RuleFor(x => x.Identification).NotEmpty().MinimumLength(5).MaximumLength(20)
+            .Matches("^[0-9A-Za-z-]+$")
+            .WithMessage("La identificación solo admite letras, números y guiones (5 a 20 caracteres).");
+        RuleFor(x => x.Phone).NotEmpty()
+            .Matches(@"^\+?[0-9\s-]{8,20}$")
+            .WithMessage("El teléfono no es válido (mínimo 8 dígitos).");
+        RuleFor(x => x.Address).MaximumLength(300);
         RuleFor(x => x.Role).Must(r => r is not (UserRole.PlatformAdmin or UserRole.ClinicAdmin))
             .WithMessage("Este rol no puede auto-asignarse.");
     }

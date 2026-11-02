@@ -86,7 +86,9 @@ public class Sprint1FlowTests : IClassFixture<VetPlatformWebFactory>
         // PBI-01: registrar propietario.
         var (registerToken, registerCookie) = await GetFormAsync(client, "/Account/Register");
         var registerResponse = await client.PostAsync("/Account/Register", Form(registerToken,
-            ("FullName", "Juan Pérez"), ("Email", email),
+            ("FullName", "Juan Pérez"), ("Identification", "1-2345-6789"),
+            ("Phone", "8888-8888"), ("Address", "San José"),
+            ("Email", email),
             ("Password", "Secreta1"), ("ConfirmPassword", "Secreta1")));
 
         Assert.Equal(HttpStatusCode.Redirect, registerResponse.StatusCode);
@@ -177,7 +179,9 @@ public class Sprint1FlowTests : IClassFixture<VetPlatformWebFactory>
 
         var (registerToken, _) = await GetFormAsync(client, "/Account/Register");
         await client.PostAsync("/Account/Register", Form(registerToken,
-            ("FullName", "María López"), ("Email", email),
+            ("FullName", "María López"), ("Identification", "9-8765-4321"),
+            ("Phone", "8777-7777"), ("Address", ""),
+            ("Email", email),
             ("Password", "Secreta1"), ("ConfirmPassword", "Secreta1")));
 
         var (loginToken, _) = await GetFormAsync(client, "/Account/Login");

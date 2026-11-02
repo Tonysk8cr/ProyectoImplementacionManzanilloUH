@@ -47,8 +47,9 @@ public class AccountController : MvcControllerBase
         }
 
         // Sprint 1: el registro público crea siempre un propietario de mascotas.
-        var result = await _authService.RegisterAsync(
-            new RegisterUserCommand(model.Email, model.Password, model.FullName, UserRole.PetOwner));
+        var result = await _authService.RegisterAsync(new RegisterUserCommand(
+            model.Email, model.Password, model.FullName, UserRole.PetOwner,
+            model.Identification, model.Phone, model.Address));
 
         if (!result.Success)
         {
