@@ -65,7 +65,8 @@ public class AuthService : IAuthService
         }
         var (token, expiry) = _jwt.Generate(user);
         await _audit.LogAsync(user.Id, AuditAction.Login, "User", user.Id.ToString(), null, AuditLog.Results.Allowed, null, ct);
-        return Result<LoginResponse>.Ok(new LoginResponse(token, expiry, user.Id, user.ActiveRoles.Select(r => r.Role.ToString()).Distinct().ToList()));
+        var roles = user.ActiveRoles.Select(r => r.Role.ToString()).Distinct().ToList();
+        return Result<LoginResponse>.Ok(new LoginResponse(token, expiry, user.Id, roles, user.FullName, user.Email));
     }
 
     public async Task<Result<UserDto>> SuspendAsync(SuspendUserCommand cmd, CancellationToken ct = default)

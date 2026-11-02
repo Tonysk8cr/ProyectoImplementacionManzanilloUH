@@ -1,0 +1,36 @@
+@{
+    ViewData["Title"] = "Inicio";
+}
+
+<section class="card" style="text-align:center; padding:3rem 1.5rem;">
+    <h1>Plataforma Centralizada de Servicios Veterinarios</h1>
+    <p class="lead" style="max-width:620px; margin:0.8rem auto 1.5rem;">
+        Registra a tus mascotas, consulta su historial clínico y mantén toda la información
+        de sus atenciones en un solo lugar.
+    </p>
+
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <a class="btn btn-primary" asp-controller="Pets" asp-action="Index">Ver mis mascotas</a>
+    }
+    else
+    {
+        <a class="btn btn-primary" asp-controller="Account" asp-action="Register">Crear cuenta</a>
+        <a class="btn" asp-controller="Account" asp-action="Login">Iniciar sesión</a>
+    }
+</section>
+
+<div class="grid">
+    <div class="card">
+        <h2 class="card-title">Registro de propietario</h2>
+        <p class="lead">Crea tu cuenta para empezar a administrar las mascotas que tienes a tu cargo.</p>
+    </div>
+    <div class="card">
+        <h2 class="card-title">Mascotas y QR</h2>
+        <p class="lead">Registra cada mascota con su ficha básica y su código QR único de identificación.</p>
+    </div>
+    <div class="card">
+        <h2 class="card-title">Historial clínico</h2>
+        <p class="lead">Consulta las atenciones, prescripciones y adendas registradas por los profesionales.</p>
+    </div>
+</div>

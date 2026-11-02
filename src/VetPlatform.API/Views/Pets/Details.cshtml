@@ -1,0 +1,148 @@
+@model VetPlatform.API.ViewModels.PetDetailsViewModel
+@{
+    ViewData["Title"] = $"Detalle de {Model.Pet.Name}";
+    var pet = Model.Pet;
+    var history = Model.History;
+    var edad = "—";
+    if (pet.BirthDate is DateOnly nacimiento)
+    {
+        var hoy = DateOnly.FromDateTime(DateTime.Today);
+        var anios = hoy.Year - nacimiento.Year;
+        if (nacimiento > hoy.AddYears(-anios)) anios--;
+        edad = $"{anios} año(s)";
+    }
+}
+
+<div class="page-header">
+    <div>
+        <h1>@pet.Name</h1>
+        <p class="lead">Ficha de la mascota e historial clínico.</p>
+    </div>
+    <a class="btn" asp-action="Index">Volver a mis mascotas</a>
+</div>
+
+<section class="card">
+    <h2 class="card-title">Datos de la mascota</h2>
+    <dl class="detail-list">
+        <div>
+            <dt>Especie</dt>
+            <dd>@pet.Species</dd>
+        </div>
+        <div>
+            <dt>Raza</dt>
+            <dd>@(string.IsNullOrWhiteSpace(pet.Breed) ? "—" : pet.Breed)</dd>
+        </div>
+        <div>
+            <dt>Fecha de nacimiento</dt>
+            <dd>@(pet.BirthDate?.ToString("dd/MM/yyyy") ?? "—")</dd>
+        </div>
+        <div>
+            <dt>Edad</dt>
+            <dd>@edad</dd>
+        </div>
+        <div>
+            <dt>Código QR</dt>
+            <dd>@pet.QrCode</dd>
+        </div>
+        <div>
+            <dt>Registrada el</dt>
+            <dd>@pet.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</dd>
+        </div>
+    </dl>
+</section>
+
+<section>
+    <h2>Historial clínico</h2>
+
+    @if (history is null || (history.Consultations.Count == 0 && history.EmergencyAttendances.Count == 0))
+    {
+        <div class="empty-state">
+            <p>Todavía no hay atenciones registradas para esta mascota.</p>
+        </div>
+    }
+    else
+    {
+        @if (history.Consultations.Count > 0)
+        {
+            @foreach (var consultation in history.Consultations.OrderByDescending(c => c.AttendanceDate))
+            {
+                <article class="consultation">
+                    <div class="consultation-header">
+                        <strong>Consulta · @consultation.AttendanceDate.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</strong>
+                        <span class="badge @(consultation.Status == "Completed" ? "badge-success" : "")">@consultation.Status</span>
+                    </div>
+
+                    <p class="card-subtitle">
+                        Fuente: @consultation.SourceType · Registrada el
+                        @consultation.RegistrationDate.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                    </p>
+
+                    @if (!string.IsNullOrWhiteSpace(consultation.Notes))
+                    {
+                        <p>@consultation.Notes</p>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(consultation.Instructions))
+                    {
+                        <p><strong>Indicaciones:</strong> @consultation.Instructions</p>
+                    }
+
+                    @if (consultation.Prescriptions.Count > 0)
+                    {
+                        <div class="subsection">
+                            <h4>Prescripciones</h4>
+                            <ul>
+                                @foreach (var prescription in consultation.Prescriptions)
+                                {
+                                    <li>
+                                        <strong>@prescription.Medication</strong> — @prescription.Dosage,
+                                        @prescription.Route, cada @prescription.Frequency durante
+                                        @prescription.DurationDays día(s).
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    }
+
+                    @if (consultation.Addenda.Count > 0)
+                    {
+                        <div class="subsection">
+                            <h4>Adendas</h4>
+                            <ul>
+                                @foreach (var addendum in consultation.Addenda)
+                                {
+                                    <li>
+                                        <strong>@addendum.Reason:</strong> @addendum.Content
+                                        <span class="card-subtitle">(@addendum.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm"))</span>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                </article>
+            }
+        }
+
+        @if (history.EmergencyAttendances.Count > 0)
+        {
+            <h3>Atenciones de emergencia</h3>
+
+            @foreach (var emergency in history.EmergencyAttendances.OrderByDescending(e => e.AttendanceDate))
+            {
+                <article class="consultation">
+                    <div class="consultation-header">
+                        <strong>Emergencia · @emergency.AttendanceDate.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</strong>
+                    </div>
+
+                    <p><strong>Hallazgos:</strong> @emergency.Findings</p>
+                    <p><strong>Acciones:</strong> @emergency.Actions</p>
+
+                    @if (!string.IsNullOrWhiteSpace(emergency.Instructions))
+                    {
+                        <p><strong>Indicaciones:</strong> @emergency.Instructions</p>
+                    }
+                </article>
+            }
+        }
+    }
+</section>
