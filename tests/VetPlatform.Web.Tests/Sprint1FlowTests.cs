@@ -147,6 +147,9 @@ public class Sprint1FlowTests : IClassFixture<VetPlatformWebFactory>
         Assert.Contains("Perro", detailsHtml);
         Assert.Contains("Historial clínico", detailsHtml);
         Assert.Contains("Todavía no hay atenciones registradas", detailsHtml);
+
+        // PBI-04 (Santiago): la edad se calcula desde la fecha de nacimiento.
+        Assert.Contains("Edad", detailsHtml);
     }
 
     [Fact]
