@@ -1,5 +1,4 @@
 using System.Net;
-using System.Text.RegularExpressions;
 
 namespace VetPlatform.Web.Tests;
 
@@ -10,46 +9,15 @@ public class Sprint1FlowTests : IClassFixture<VetPlatformWebFactory>
 
     public Sprint1FlowTests(VetPlatformWebFactory factory) => _factory = factory;
 
-    // ---------- helpers ----------
+    // ---------- helpers (compartidos en WebTestHelpers) ----------
 
-    /// <summary>Cliente que no sigue redirecciones, para poder asertar sobre los 302 del flujo.</summary>
-    private HttpClient CreateClient() => CreateClient(_factory);
+    private HttpClient CreateClient() => WebTestHelpers.CreateClient(_factory);
 
-    private static HttpClient CreateClient(VetPlatformWebFactory factory) =>
-        factory.CreateClient(new Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryClientOptions
-        {
-            AllowAutoRedirect = false,
-        });
+    private static Task<(string Token, string Cookie)> GetFormAsync(HttpClient client, string url) =>
+        WebTestHelpers.GetFormAsync(client, url);
 
-    /// <summary>Extrae el token antiforgery de un formulario Razor.</summary>
-    private static string AntiforgeryToken(string html) =>
-        Regex.Match(html, @"name=""__RequestVerificationToken"" type=""hidden"" value=""([^""]+)""")
-            .Groups[1].Value;
-
-    /// <summary>Lee una cookie de ASP.NET desde la respuesta (para reenviarla como cabecera).</summary>
-    private static string AntiforgeryCookie(HttpResponseMessage response) =>
-        response.Headers.TryGetValues("Set-Cookie", out var cookies)
-            ? cookies.FirstOrDefault(c => c.StartsWith(".AspNetCore.Antiforgery")) ?? ""
-            : "";
-
-    private static async Task<(string Token, string Cookie)> GetFormAsync(HttpClient client, string url)
-    {
-        var response = await client.GetAsync(url);
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var html = await response.Content.ReadAsStringAsync();
-        return (AntiforgeryToken(html), AntiforgeryCookie(response));
-    }
-
-    private static FormUrlEncodedContent Form(string token, params (string Key, string Value)[] fields)
-    {
-        var data = new Dictionary<string, string> { ["__RequestVerificationToken"] = token };
-        foreach (var (key, value) in fields)
-        {
-            data[key] = value;
-        }
-
-        return new FormUrlEncodedContent(data);
-    }
+    private static FormUrlEncodedContent Form(string token, params (string Key, string Value)[] fields) =>
+        WebTestHelpers.Form(token, fields);
 
     // ---------- portada y páginas públicas ----------
 
@@ -86,7 +54,8 @@ public class Sprint1FlowTests : IClassFixture<VetPlatformWebFactory>
         // PBI-01: registrar propietario.
         var (registerToken, registerCookie) = await GetFormAsync(client, "/Account/Register");
         var registerResponse = await client.PostAsync("/Account/Register", Form(registerToken,
-            ("FullName", "Juan Pérez"), ("Email", email),
+            ("FullName", "Juan Pérez"),
+            ("Email", email),
             ("Password", "Secreta1"), ("ConfirmPassword", "Secreta1")));
 
         Assert.Equal(HttpStatusCode.Redirect, registerResponse.StatusCode);
@@ -147,6 +116,9 @@ public class Sprint1FlowTests : IClassFixture<VetPlatformWebFactory>
         Assert.Contains("Perro", detailsHtml);
         Assert.Contains("Historial clínico", detailsHtml);
         Assert.Contains("Todavía no hay atenciones registradas", detailsHtml);
+
+        // PBI-04 (Santiago): la edad se calcula desde la fecha de nacimiento.
+        Assert.Contains("Edad", detailsHtml);
     }
 
     [Fact]
@@ -169,19 +141,6 @@ public class Sprint1FlowTests : IClassFixture<VetPlatformWebFactory>
     /// <summary>Registra un propietario único y devuelve un cliente con la sesión iniciada.</summary>
     private static async Task<HttpClient> RegisterAndLoginAsync(VetPlatformWebFactory factory)
     {
-        var client = CreateClient(factory);
-        var email = $"dueno{Guid.NewGuid():N}@test.com";
-
-        var (registerToken, _) = await GetFormAsync(client, "/Account/Register");
-        await client.PostAsync("/Account/Register", Form(registerToken,
-            ("FullName", "María López"), ("Email", email),
-            ("Password", "Secreta1"), ("ConfirmPassword", "Secreta1")));
-
-        var (loginToken, _) = await GetFormAsync(client, "/Account/Login");
-        var loginResponse = await client.PostAsync("/Account/Login", Form(loginToken,
-            ("Email", email), ("Password", "Secreta1")));
-
-        Assert.Equal(HttpStatusCode.Redirect, loginResponse.StatusCode);
-        return client;
+        return await WebTestHelpers.RegisterAndLoginAsync(factory);
     }
 }
