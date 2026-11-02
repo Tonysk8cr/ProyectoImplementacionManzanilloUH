@@ -1,0 +1,18 @@
+@model VetPlatform.API.ViewModels.OwnerProfileViewModel
+@{
+    ViewData["Title"] = "Editar mis datos";
+}
+
+<div class="form-card">
+    <h1>Editar mis datos</h1>
+    <p class="lead">Actualiza tu información de propietario.</p>
+
+    <form asp-action="Edit" method="post" novalidate>
+        <partial name="_OwnerForm" model="Model" />
+        <button type="submit" class="btn btn-primary btn-block">Guardar cambios</button>
+    </form>
+
+    <p class="lead" style="margin-top:1rem; text-align:center;">
+        <a asp-action="Index">Cancelar</a>
+    </p>
+</div>

@@ -1,0 +1,13 @@
+C:\Programacion\PBI01_pro_manzanillo\src\VetPlatform.Domain\bin\Debug\net8.0\VetPlatform.Domain.deps.json
+C:\Programacion\PBI01_pro_manzanillo\src\VetPlatform.Domain\bin\Debug\net8.0\VetPlatform.Domain.dll
+C:\Programacion\PBI01_pro_manzanillo\src\VetPlatform.Domain\bin\Debug\net8.0\VetPlatform.Domain.pdb
+C:\Programacion\PBI01_pro_manzanillo\src\VetPlatform.Domain\obj\Debug\net8.0\VetPlatform.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Programacion\PBI01_pro_manzanillo\src\VetPlatform.Domain\obj\Debug\net8.0\VetPlatform.Domain.AssemblyInfoInputs.cache
+C:\Programacion\PBI01_pro_manzanillo\src\VetPlatform.Domain\obj\Debug\net8.0\VetPlatform.Domain.AssemblyInfo.cs
+C:\Programacion\PBI01_pro_manzanillo\src\VetPlatform.Domain\obj\Debug\net8.0\VetPlatform.Domain.csproj.CoreCompileInputs.cache
+C:\Programacion\PBI01_pro_manzanillo\src\VetPlatform.Domain\obj\Debug\net8.0\VetPlatform.Domain.sourcelink.json
+C:\Programacion\PBI01_pro_manzanillo\src\VetPlatform.Domain\obj\Debug\net8.0\VetPlatform.Domain.dll
+C:\Programacion\PBI01_pro_manzanillo\src\VetPlatform.Domain\obj\Debug\net8.0\refint\VetPlatform.Domain.dll
+C:\Programacion\PBI01_pro_manzanillo\src\VetPlatform.Domain\obj\Debug\net8.0\VetPlatform.Domain.pdb
+C:\Programacion\PBI01_pro_manzanillo\src\VetPlatform.Domain\obj\Debug\net8.0\ref\VetPlatform.Domain.dll
+C:\Programacion\PBI01_pro_manzanillo\src\VetPlatform.Domain\obj\Debug\net8.0\VetPlatf.8B3CABF2.Up2Date
