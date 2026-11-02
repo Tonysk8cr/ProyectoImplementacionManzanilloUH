@@ -3,6 +3,14 @@
     ViewData["Title"] = $"Detalle de {Model.Pet.Name}";
     var pet = Model.Pet;
     var history = Model.History;
+    var edad = "—";
+    if (pet.BirthDate is DateOnly nacimiento)
+    {
+        var hoy = DateOnly.FromDateTime(DateTime.Today);
+        var anios = hoy.Year - nacimiento.Year;
+        if (nacimiento > hoy.AddYears(-anios)) anios--;
+        edad = $"{anios} año(s)";
+    }
 }
 
 <div class="page-header">
@@ -27,6 +35,10 @@
         <div>
             <dt>Fecha de nacimiento</dt>
             <dd>@(pet.BirthDate?.ToString("dd/MM/yyyy") ?? "—")</dd>
+        </div>
+        <div>
+            <dt>Edad</dt>
+            <dd>@edad</dd>
         </div>
         <div>
             <dt>Código QR</dt>
