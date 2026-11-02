@@ -3,6 +3,10 @@
     ViewData["Title"] = "Mis mascotas";
 }
 
+@* PBI-05: muestra el motivo del fallo (p. ej. "Mascota no encontrada.") cuando se
+   consulta una mascota que no existe o no pertenece al usuario. *@
+<div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
 <div class="page-header">
     <div>
         <h1>Mis mascotas</h1>
