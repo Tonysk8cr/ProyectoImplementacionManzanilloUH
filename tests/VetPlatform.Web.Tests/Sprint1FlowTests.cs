@@ -54,8 +54,7 @@ public class Sprint1FlowTests : IClassFixture<VetPlatformWebFactory>
         // PBI-01: registrar propietario.
         var (registerToken, registerCookie) = await GetFormAsync(client, "/Account/Register");
         var registerResponse = await client.PostAsync("/Account/Register", Form(registerToken,
-            ("FullName", "Juan Pérez"), ("Identification", "1-2345-6789"),
-            ("Phone", "8888-8888"), ("Address", "San José"),
+            ("FullName", "Juan Pérez"),
             ("Email", email),
             ("Password", "Secreta1"), ("ConfirmPassword", "Secreta1")));
 

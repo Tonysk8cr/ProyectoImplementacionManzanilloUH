@@ -9,19 +9,18 @@ public class Pbi05PruebasTests : IClassFixture<VetPlatformWebFactory>
     public Pbi05PruebasTests(VetPlatformWebFactory factory) => _factory = factory;
 
     [Fact]
-    public async Task Registro_sin_identificacion_ni_telefono_muestra_errores_y_no_crea_cuenta()
+    public async Task Registro_sin_nombre_muestra_error_y_no_crea_cuenta()
     {
         using var client = CreateClient(_factory);
         var email = $"pbi05{Guid.NewGuid():N}@test.com";
         var (token, _) = await GetFormAsync(client, "/Account/Register");
         var response = await client.PostAsync("/Account/Register", Form(token,
-            ("FullName", "Prueba QA"), ("Email", email),
+            ("FullName", ""), ("Email", email),
             ("Password", "Secreta1"), ("ConfirmPassword", "Secreta1")));
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var html = WebUtility.HtmlDecode(await response.Content.ReadAsStringAsync());
-        Assert.Contains(">La identificación es obligatoria.</span>", html);
-        Assert.Contains(">El teléfono es obligatorio.</span>", html);
+        Assert.Contains(">El nombre completo es obligatorio.</span>", html);
         Assert.Contains(email, html);
 
         var (loginToken, _) = await GetFormAsync(client, "/Account/Login");

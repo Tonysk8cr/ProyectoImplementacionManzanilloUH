@@ -41,7 +41,6 @@ public class AuthService : IAuthService
         var user = new User
         {
             Email = cmd.Email.Trim().ToLowerInvariant(), FullName = cmd.FullName.Trim(), PasswordHash = _hasher.Hash(cmd.Password),
-            Identification = cmd.Identification.Trim(), Phone = cmd.Phone.Trim(), Address = cmd.Address?.Trim(),
             // Professionals (vets, stores) require manual verification by an admin.
             IsVerified = cmd.Role == UserRole.PetOwner, CreatedAt = now, UpdatedAt = now,
         };

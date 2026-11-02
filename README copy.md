@@ -7,12 +7,9 @@ Monolito modular con Clean Architecture para la plataforma veterinaria: Identida
 src/VetPlatform.Domain          Entidades, enums, excepciones, interfaces de repositorio
 src/VetPlatform.Application     Commands, DTOs, Result<T>, interfaces de servicio, validadores (FluentValidation)
 src/VetPlatform.Infrastructure  EF Core (PostgreSQL), repositorios, servicios, JWT/BCrypt, políticas, migraciones
-src/VetPlatform.API             Controladores MVC + vistas Razor (Views/, wwwroot/), ViewModels, middleware (auditoría de 401/403), Program.cs
+src/VetPlatform.API             Controllers, middleware (ProblemDetails, auditoría de 401/403), Program.cs
 tests/VetPlatform.Application.Tests  xUnit + FluentAssertions sobre servicios reales con SQLite en memoria
-tests/VetPlatform.Web.Tests     xUnit + WebApplicationFactory: flujo completo del navegador (cookies, antiforgery, vistas) con SQLite
 ```
-
-> **Estado actual:** el flujo Sprint 1 (registro/login del propietario, registrar mascota, lista y detalle con historial) es MVC con vistas Razor y autenticación por cookie. Los módulos Audit, Clinics, Consultations, Emergency, Orders, Prescriptions, Products y Scheduling siguen exponiendo API JSON bajo `/api/...`.
 
 ## Prerrequisitos
 - .NET SDK 8.0
@@ -44,35 +41,7 @@ dotnet ef migrations add <Nombre> -p src/VetPlatform.Infrastructure -s src/VetPl
 dotnet restore
 dotnet run --project src/VetPlatform.API
 ```
-La app es MVC: abre `http://localhost:5295/` en el navegador (puerto según `Properties/launchSettings.json`). Health check: `GET /health`.
-
-**Importante — base de datos:** sin una base de datos accesible, la app arranca y las páginas que no consultan BD responden bien (portada, login, registro), pero el login, el registro y las mascotas fallarán y la consola mostrará errores `Failed to connect ... :5432` cada 30 segundos (el servicio de notificaciones reintenta). No es un error de código: falta la cadena de conexión real. Ver "Base de datos en Azure" abajo.
-
-## Base de datos en Azure (pendiente)
-
-Cuando se tenga la cadena de conexión de Azure Database for PostgreSQL, configurarla **sin tocar el repositorio** (no subir secretos):
-
-1. **En Azure (producción):** en el App Service → *Configuration* → *Application settings*, agregar:
-   | Name | Value |
-   |---|---|
-   | `ConnectionStrings__DefaultConnection` | la cadena de conexión completa |
-   | `Database__ApplyMigrationsOnStartup` | `true` (aplica `InitialCreate` al arrancar) |
-
-   Alternativamente, aplicar las migraciones una sola vez desde la máquina de desarrollo:
-   ```bash
-   ConnectionStrings__DefaultConnection="Host=...;Database=...;Username=...;Password=..." \
-   dotnet ef database update -p src/VetPlatform.Infrastructure -s src/VetPlatform.API
-   ```
-
-2. **Localmente (desarrollo):** usar preferiblemente *user secrets* para no dejar la cadena en el repo:
-   ```bash
-   cd src/VetPlatform.API
-   dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Host=...;Database=...;Username=...;Password=..."
-   ```
-
-3. Si se deja la cadena en `appsettings.json` temporalmente, **confirmar que no quede en un commit** antes de subir.
-
-La migración inicial `InitialCreate` ya está incluida en `src/VetPlatform.Infrastructure/Data/Migrations` (22 tablas).
+Swagger (entorno Development): `https://localhost:<puerto>/swagger`. Health check: `GET /health`.
 
 Primer administrador: los roles `PlatformAdmin`/`ClinicAdmin` no pueden auto-registrarse. Registre un usuario y asígnele el rol directamente en BD:
 ```sql

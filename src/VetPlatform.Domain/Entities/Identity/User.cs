@@ -8,10 +8,6 @@ public class User : BaseEntity
     public string Email { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
     public string FullName { get; set; } = string.Empty;
-    /// <summary>Cédula u otra identificación del propietario (PBI-01).</summary>
-    public string Identification { get; set; } = string.Empty;
-    public string Phone { get; set; } = string.Empty;
-    public string? Address { get; set; }
     public bool IsVerified { get; set; }
     public bool IsSuspended { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
