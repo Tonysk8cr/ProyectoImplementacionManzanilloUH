@@ -1,5 +1,5 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 using VetPlatform.API.Middleware;
 using VetPlatform.Application;
 using VetPlatform.Infrastructure;
@@ -7,43 +7,48 @@ using VetPlatform.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// MVC: controladores con vistas Razor (Model-View-Controller).
 builder.Services.AddApplication();
-builder.Services.AddInfrastructure(builder.Configuration); // DbContext, repos, services, JWT auth, authorization policies
-builder.Services.AddControllers().AddJsonOptions(o =>
-    o.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter()));
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "VetPlatform API", Version = "v1" });
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        In = ParameterLocation.Header, Name = "Authorization", Type = SecuritySchemeType.Http, Scheme = "bearer", BearerFormat = "JWT",
-    });
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        { new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" } }, Array.Empty<string>() },
-    });
-});
+builder.Services.AddInfrastructure(builder.Configuration); // DbContext, repositorios, servicios, autenticación por cookie, políticas
+builder.Services.AddControllersWithViews(options =>
+    // Protege todas las peticiones POST/PUT/DELETE contra falsificación de solicitudes.
+    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
 
 var app = builder.Build();
 
+// Manejo global de excepciones (va primero para "envolver" el resto del pipeline):
+// /api → ProblemDetails JSON (ExceptionHandlingMiddleware); vistas MVC → página de error HTML.
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+// Crea/actualiza el esquema de la base de datos al arrancar (configurable por appsettings).
 if (app.Configuration.GetValue<bool>("Database:ApplyMigrationsOnStartup"))
 {
     using var scope = app.Services.CreateScope();
     await scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.MigrateAsync();
 }
 
-app.UseMiddleware<ExceptionHandlingMiddleware>();
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+
 app.UseAuthentication();
-app.UseMiddleware<AuditMiddleware>();
+app.UseMiddleware<AuditMiddleware>(); // Audita respuestas 401/403 (solo ruta, nunca cuerpos).
 app.UseAuthorization();
-app.MapControllers();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// Health check para Azure App Service / balanceadores.
 app.MapGet("/health", () => Results.Ok(new { status = "ok" })).AllowAnonymous();
 
 app.Run();

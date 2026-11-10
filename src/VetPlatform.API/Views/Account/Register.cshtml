@@ -1,0 +1,62 @@
+@model VetPlatform.API.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Crear cuenta";
+}
+
+<div class="form-card">
+    <h1>Crear cuenta</h1>
+    <p class="lead">Regístrate como propietario de mascotas.</p>
+
+    <form asp-action="Register" method="post" novalidate>
+        <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+        <div class="form-group">
+            <label asp-for="FullName"></label>
+            <input asp-for="FullName" autocomplete="name" />
+            <span asp-validation-for="FullName" class="field-validation-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Email"></label>
+            <input asp-for="Email" type="email" autocomplete="email" />
+            <span asp-validation-for="Email" class="field-validation-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="IdentificationNumber"></label>
+            <input asp-for="IdentificationNumber" autocomplete="off" />
+            <span asp-validation-for="IdentificationNumber" class="field-validation-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Phone"></label>
+            <input asp-for="Phone" type="tel" autocomplete="tel" placeholder="Ej.: 8888 8888" />
+            <span asp-validation-for="Phone" class="field-validation-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Address"></label>
+            <input asp-for="Address" autocomplete="street-address" />
+            <span asp-validation-for="Address" class="field-validation-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Password"></label>
+            <input asp-for="Password" autocomplete="new-password" />
+            <p class="field-hint">Mínimo 8 caracteres, con al menos una mayúscula y un número.</p>
+            <span asp-validation-for="Password" class="field-validation-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="ConfirmPassword"></label>
+            <input asp-for="ConfirmPassword" autocomplete="new-password" />
+            <span asp-validation-for="ConfirmPassword" class="field-validation-error"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Registrarme</button>
+    </form>
+
+    <p class="lead" style="margin-top:1rem; text-align:center;">
+        ¿Ya tienes cuenta? <a asp-action="Login">Inicia sesión</a>
+    </p>
+</div>

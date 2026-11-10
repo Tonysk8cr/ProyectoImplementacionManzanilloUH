@@ -1,5 +1,7 @@
 using System.Text;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +13,7 @@ using VetPlatform.Application.Features.Emergency;
 using VetPlatform.Application.Features.Identity;
 using VetPlatform.Application.Features.Marketplace;
 using VetPlatform.Application.Features.Organizations;
+using VetPlatform.Application.Features.Owners;
 using VetPlatform.Application.Features.Scheduling;
 using VetPlatform.Domain.Interfaces.Repositories;
 using VetPlatform.Infrastructure.Data;
@@ -30,15 +33,33 @@ public static class DependencyInjection
         var jwt = config.GetSection("Jwt").Get<JwtOptions>() ?? new JwtOptions();
         if (string.IsNullOrWhiteSpace(jwt.Key) || jwt.Key.Length < 32)
             throw new InvalidOperationException("Jwt:Key debe tener al menos 32 caracteres.");
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(o =>
-        {
-            o.TokenValidationParameters = new TokenValidationParameters
+
+        // Las vistas MVC usan autenticación por cookie (sesión de navegador).
+        // El login conserva el JWT en la respuesta por si se retoma una API, pero la sesión del navegador es la cookie.
+        services.AddAuthentication(o =>
             {
-                ValidateIssuer = true, ValidIssuer = jwt.Issuer, ValidateAudience = true, ValidAudience = jwt.Audience,
-                ValidateIssuerSigningKey = true, IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key)),
-                ValidateLifetime = true, ClockSkew = TimeSpan.FromMinutes(1),
-            };
-        });
+                o.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                o.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            })
+            .AddCookie(o =>
+            {
+                o.LoginPath = "/Account/Login";
+                o.LogoutPath = "/Account/Logout";
+                o.AccessDeniedPath = "/Account/AccessDenied";
+                o.ExpireTimeSpan = TimeSpan.FromHours(8);
+                o.SlidingExpiration = true;
+                o.Cookie.HttpOnly = true;
+                o.Cookie.SameSite = SameSiteMode.Lax;
+            })
+            .AddJwtBearer(o =>
+            {
+                o.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true, ValidIssuer = jwt.Issuer, ValidateAudience = true, ValidAudience = jwt.Audience,
+                    ValidateIssuerSigningKey = true, IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key)),
+                    ValidateLifetime = true, ClockSkew = TimeSpan.FromMinutes(1),
+                };
+            });
         services.AddAuthorization(AuthorizationPolicies.Configure);
         services.AddHostedService<NotificationDispatcherHostedService>();
         return services;
@@ -57,6 +78,8 @@ public static class DependencyInjection
         services.AddScoped<IClinicRepository, ClinicRepository>();
         services.AddScoped<IStoreRepository, StoreRepository>();
         services.AddScoped<IPetRepository, PetRepository>();
+        services.AddScoped<IOwnerProfileRepository, OwnerProfileRepository>();
+        services.AddScoped<IOwnerService, OwnerService>();
         services.AddScoped<IClinicalRecordRepository, ClinicalRecordRepository>();
         services.AddScoped<IConsultationRepository, ConsultationRepository>();
         services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
