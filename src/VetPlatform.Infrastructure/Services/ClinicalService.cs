@@ -62,7 +62,9 @@ public class ClinicalService : IClinicalService
         if (!v.IsValid) return Result<PetDto>.Invalid(v.Errors.Select(e => e.ErrorMessage).ToArray());
 
         var now = _time.GetUtcNow();
-        var pet = new Pet { OwnerId = actor, Name = cmd.Name.Trim(), Species = cmd.Species.Trim(), Breed = cmd.Breed, BirthDate = cmd.BirthDate,
+        var pet = new Pet { OwnerId = actor, Name = cmd.Name.Trim(), Species = cmd.Species.Trim(),
+            Breed = string.IsNullOrWhiteSpace(cmd.Breed) ? null : cmd.Breed.Trim(),
+            BirthDate = cmd.BirthDate,
             QrCode = Pet.GenerateOpaqueQrCode(), CreatedAt = now };
         await _pets.AddAsync(pet, ct);
         await _records.AddAsync(new ClinicalRecord { PetId = pet.Id, CreatedAt = now }, ct);
