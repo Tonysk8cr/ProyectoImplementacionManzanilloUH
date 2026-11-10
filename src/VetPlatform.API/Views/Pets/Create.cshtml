@@ -1,6 +1,7 @@
 @model VetPlatform.API.ViewModels.PetViewModel
 @{
     ViewData["Title"] = "Registrar mascota";
+    var hoy = DateTime.Today.ToString("yyyy-MM-dd");
 }
 
 <div class="form-card">
@@ -18,19 +19,28 @@
 
         <div class="form-group">
             <label asp-for="Species"></label>
-            <input asp-for="Species" placeholder="Ej.: perro, gato, conejo" />
+            <select asp-for="Species">
+                <option value="">Selecciona una especie</option>
+                <option value="Perro">Perro</option>
+                <option value="Gato">Gato</option>
+                <option value="Conejo">Conejo</option>
+                <option value="Ave">Ave</option>
+                <option value="Roedor">Roedor</option>
+                <option value="Reptil">Reptil</option>
+                <option value="Otro">Otro</option>
+            </select>
             <span asp-validation-for="Species" class="field-validation-error"></span>
         </div>
 
         <div class="form-group">
             <label asp-for="Breed"></label>
-            <input asp-for="Breed" />
+            <input asp-for="Breed" placeholder="Ej.: Labrador, Siamés. Si elegiste «Otro», indica cuál." />
             <span asp-validation-for="Breed" class="field-validation-error"></span>
         </div>
 
         <div class="form-group">
             <label asp-for="BirthDate"></label>
-            <input asp-for="BirthDate" type="date" />
+            <input asp-for="BirthDate" type="date" max="@hoy" />
             <span asp-validation-for="BirthDate" class="field-validation-error"></span>
         </div>
 
