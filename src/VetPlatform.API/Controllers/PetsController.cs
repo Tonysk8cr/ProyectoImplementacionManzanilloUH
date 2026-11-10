@@ -64,6 +64,7 @@ public class PetsController : MvcControllerBase
         var pet = result.Value;
         if (pet is null)
         {
+            ModelState.AddModelError(string.Empty, "No se pudo registrar la mascota. Inténtalo de nuevo.");
             return View(model);
         }
 

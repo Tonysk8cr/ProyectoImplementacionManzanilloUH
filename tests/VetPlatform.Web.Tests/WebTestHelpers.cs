@@ -45,16 +45,24 @@ internal static class WebTestHelpers
     }
 
     /// <summary>Registra un propietario único y devuelve un cliente con la sesión iniciada.</summary>
+// <summary>Registra un propietario único y devuelve un cliente con la sesión iniciada.</summary>
     public static async Task<HttpClient> RegisterAndLoginAsync(VetPlatformWebFactory factory)
     {
         var client = CreateClient(factory);
         var email = $"dueno{Guid.NewGuid():N}@test.com";
 
+        // El registro (PBI-01) exige cédula y teléfono; la dirección es opcional.
         var (registerToken, _) = await GetFormAsync(client, "/Account/Register");
-        await client.PostAsync("/Account/Register", Form(registerToken,
+        var registerResponse = await client.PostAsync("/Account/Register", Form(registerToken,
             ("FullName", "María López"),
             ("Email", email),
+            ("IdentificationNumber", CedulaUnica()),
+            ("Phone", "88887777"),
+            ("Address", "San José, Costa Rica"),
             ("Password", "Secreta1"), ("ConfirmPassword", "Secreta1")));
+
+        // Si el registro falla, el test lo indica aquí y no recién en el login.
+        Assert.Equal(HttpStatusCode.Redirect, registerResponse.StatusCode);
 
         var (loginToken, _) = await GetFormAsync(client, "/Account/Login");
         var loginResponse = await client.PostAsync("/Account/Login", Form(loginToken,
@@ -63,4 +71,7 @@ internal static class WebTestHelpers
         Assert.Equal(HttpStatusCode.Redirect, loginResponse.StatusCode);
         return client;
     }
+
+    /// <summary>Cédula aleatoria de 9 dígitos, distinta en cada test (la base en memoria es compartida).</summary>
+    private static string CedulaUnica() => Random.Shared.Next(100_000_000, 999_999_999).ToString();
 }

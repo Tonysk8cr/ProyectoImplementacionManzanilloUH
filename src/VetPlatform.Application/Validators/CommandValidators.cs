@@ -31,13 +31,25 @@ public class LoginCommandValidator : AbstractValidator<LoginCommand>
 
 public class CreatePetCommandValidator : AbstractValidator<CreatePetCommand>
 {
+    /// <summary>Misma edad máxima que el formulario (PetViewModel).</summary>
+    private const int EdadMaximaAnios = 40;
+
     public CreatePetCommandValidator()
     {
-        RuleFor(x => x.Name).NotEmpty().MaximumLength(100);
-        RuleFor(x => x.Species).NotEmpty().MaximumLength(50);
-        RuleFor(x => x.Breed).MaximumLength(100);
-        RuleFor(x => x.BirthDate).Must(d => d == null || d <= DateOnly.FromDateTime(DateTime.UtcNow))
+        RuleFor(x => x.Name)
+            .NotEmpty().WithMessage("El nombre es obligatorio.")
+            .MaximumLength(100).WithMessage("El nombre no puede exceder 100 caracteres.");
+        RuleFor(x => x.Species)
+            .NotEmpty().WithMessage("La especie es obligatoria.")
+            .MaximumLength(50).WithMessage("La especie no puede exceder 50 caracteres.");
+        RuleFor(x => x.Breed)
+            .MaximumLength(100).WithMessage("La raza no puede exceder 100 caracteres.");
+        RuleFor(x => x.BirthDate)
+            .Must(d => d == null || d <= DateOnly.FromDateTime(DateTime.UtcNow))
             .WithMessage("La fecha de nacimiento no puede ser futura.");
+        RuleFor(x => x.BirthDate)
+            .Must(d => d == null || d >= DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-EdadMaximaAnios))
+            .WithMessage($"La fecha de nacimiento no puede ser de hace más de {EdadMaximaAnios} años.");
     }
 }
 
