@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "iIuSHQ3cZTc=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\winfl\\Documents\\Universidad\\2026\\Last_cuatri\\Desarrollo de aplicaciones\\Projects\\ProyectoImplementacionManzanilloUH\\src\\VetPlatform.Application\\VetPlatform.Application.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\winfl\\.nuget\\packages\\fluentvalidation\\11.9.2\\fluentvalidation.11.9.2.nupkg.sha512",
+    "C:\\Users\\winfl\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.9.2\\fluentvalidation.dependencyinjectionextensions.11.9.2.nupkg.sha512",
+    "C:\\Users\\winfl\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\8.0.1\\microsoft.extensions.dependencyinjection.abstractions.8.0.1.nupkg.sha512",
+    "C:\\Users\\winfl\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.31\\microsoft.netcore.app.ref.8.0.31.nupkg.sha512",
+    "C:\\Users\\winfl\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.31\\microsoft.windowsdesktop.app.ref.8.0.31.nupkg.sha512",
+    "C:\\Users\\winfl\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.31\\microsoft.aspnetcore.app.ref.8.0.31.nupkg.sha512"
+  ],
+  "logs": []
+}
