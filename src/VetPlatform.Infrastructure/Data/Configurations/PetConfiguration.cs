@@ -12,7 +12,6 @@ public class PetConfiguration : IEntityTypeConfiguration<Pet>
         b.Property(x => x.QrCode).HasMaxLength(64).IsRequired();
         b.Property(x => x.Name).HasMaxLength(100).IsRequired();
         b.Property(x => x.Species).HasMaxLength(50).IsRequired();
-        b.Property(x => x.Breed).HasMaxLength(100);
         b.Property(x => x.Status).HasConversion<string>().HasMaxLength(20);
     }
 }
