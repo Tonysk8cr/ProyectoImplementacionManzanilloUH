@@ -14,7 +14,7 @@ public class OwnerProfileConfiguration : IEntityTypeConfiguration<OwnerProfile>
 
         // Un perfil activo por usuario y una identificación activa por perfil.
         // El filtro permite volver a registrarse tras una eliminación lógica (IsDeleted).
-        b.HasIndex(x => x.UserId).IsUnique().HasFilter("\"IsDeleted\" = FALSE");
-        b.HasIndex(x => x.IdentificationNumber).IsUnique().HasFilter("\"IsDeleted\" = FALSE");
+        b.HasIndex(x => x.UserId).IsUnique().HasFilter("[IsDeleted] = 0");
+        b.HasIndex(x => x.IdentificationNumber).IsUnique().HasFilter("[IsDeleted] = 0");
     }
 }

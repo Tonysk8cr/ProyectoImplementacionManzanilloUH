@@ -11,10 +11,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("0275680b-6b12-47c3-b5a9-d97af5b6885c")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("VetPlatform.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+de5cb7947d4f54f3e4be70d2a027f3ff6247a24f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7b5cc4e8fa05e4f3661704363cab4633a34b9c66")]
 [assembly: System.Reflection.AssemblyProductAttribute("VetPlatform.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("VetPlatform.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

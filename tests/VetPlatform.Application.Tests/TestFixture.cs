@@ -29,18 +29,29 @@ public class TestCurrentUser : ICurrentUserService
     public void As(Guid userId, params UserRole[] roles) { UserId = userId; RoleList = roles.ToList(); Orgs = new(); }
 }
 
-/// <summary>Real services + EF Core over SQLite in-memory (supports transactions and concurrency tokens).</summary>
+/// <summary>Real services + EF Core over SQLite in-memory (supports transactions and concurrency tokens).
+/// If VETPLATFORM_TEST_SQLSERVER holds a SQL Server connection string (e.g. LocalDB), each fixture instead
+/// creates a throwaway database, applies the real migrations and drops it on Dispose.</summary>
 public sealed class TestFixture : IDisposable
 {
-    private readonly SqliteConnection _connection;
+    public const string SqlServerVariable = "VETPLATFORM_TEST_SQLSERVER";
+    private readonly SqliteConnection? _connection;
+    private readonly string? _sqlServerConnection;
     private readonly ServiceProvider _root;
     public TestClock Clock { get; } = new();
     public TestCurrentUser CurrentUser { get; } = new();
 
     public TestFixture()
     {
-        _connection = new SqliteConnection("DataSource=:memory:");
-        _connection.Open();
+        var server = Environment.GetEnvironmentVariable(SqlServerVariable);
+        if (!string.IsNullOrWhiteSpace(server))
+            _sqlServerConnection = new Microsoft.Data.SqlClient.SqlConnectionStringBuilder(server)
+                { InitialCatalog = $"VetPlatformTest_{Guid.NewGuid():N}" }.ConnectionString;
+        else
+        {
+            _connection = new SqliteConnection("DataSource=:memory:");
+            _connection.Open();
+        }
         var config = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?>
         {
             ["Jwt:Key"] = "TEST_SECRET_KEY_THAT_IS_LONG_ENOUGH_123456",
@@ -50,12 +61,17 @@ public sealed class TestFixture : IDisposable
         services.AddLogging();
         services.AddApplication();
         services.AddInfrastructureCore(config);
-        services.AddDbContext<AppDbContext>(o => o.UseSqlite(_connection));
+        if (_sqlServerConnection is not null)
+            services.AddDbContext<AppDbContext>(o => o.UseSqlServer(_sqlServerConnection));
+        else
+            services.AddDbContext<AppDbContext>(o => o.UseSqlite(_connection!));
         services.AddSingleton<TimeProvider>(Clock);
         services.AddSingleton<ICurrentUserService>(CurrentUser);
         _root = services.BuildServiceProvider();
         using var scope = _root.CreateScope();
-        scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.EnsureCreated();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        if (_sqlServerConnection is not null) db.Database.Migrate(); // validates the real migration, same as Somee
+        else db.Database.EnsureCreated();
     }
 
     /// <summary>Each scope = one request with its own DbContext.</summary>
@@ -80,5 +96,14 @@ public sealed class TestFixture : IDisposable
         return await action(Get<TSvc>(s));
     }
 
-    public void Dispose() { _root.Dispose(); _connection.Dispose(); }
+    public void Dispose()
+    {
+        if (_sqlServerConnection is not null)
+        {
+            using var scope = _root.CreateScope();
+            scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.EnsureDeleted();
+        }
+        _root.Dispose();
+        _connection?.Dispose();
+    }
 }

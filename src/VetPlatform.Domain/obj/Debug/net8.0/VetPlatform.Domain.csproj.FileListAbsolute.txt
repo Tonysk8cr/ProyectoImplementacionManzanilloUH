@@ -23,4 +23,3 @@ C:\Users\tonyi\OneDrive - Universidad Hispanoamericana\Universidad\VIII Cuatri\D
 C:\Users\tonyi\OneDrive - Universidad Hispanoamericana\Universidad\VIII Cuatri\Desarrollo de aplicaciones\ProyectoImplementacionManzanilloUH\src\VetPlatform.Domain\obj\Debug\net8.0\refint\VetPlatform.Domain.dll
 C:\Users\tonyi\OneDrive - Universidad Hispanoamericana\Universidad\VIII Cuatri\Desarrollo de aplicaciones\ProyectoImplementacionManzanilloUH\src\VetPlatform.Domain\obj\Debug\net8.0\VetPlatform.Domain.pdb
 C:\Users\tonyi\OneDrive - Universidad Hispanoamericana\Universidad\VIII Cuatri\Desarrollo de aplicaciones\ProyectoImplementacionManzanilloUH\src\VetPlatform.Domain\obj\Debug\net8.0\ref\VetPlatform.Domain.dll
-C:\Users\tonyi\OneDrive - Universidad Hispanoamericana\Universidad\VIII Cuatri\Desarrollo de aplicaciones\ProyectoImplementacionManzanilloUH\src\VetPlatform.Domain\obj\Debug\net8.0\VetPlatf.8B3CABF2.Up2Date
