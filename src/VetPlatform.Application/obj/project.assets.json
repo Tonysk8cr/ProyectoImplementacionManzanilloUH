@@ -150,23 +150,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Usuario\\.nuget\\packages\\": {},
+    "C:\\Users\\tonyi\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Programacion\\PBI01_pro_manzanillo\\src\\VetPlatform.Application\\VetPlatform.Application.csproj",
+      "projectUniqueName": "C:\\Users\\tonyi\\OneDrive - Universidad Hispanoamericana\\Universidad\\VIII Cuatri\\Desarrollo de aplicaciones\\ProyectoImplementacionManzanilloUH\\src\\VetPlatform.Application\\VetPlatform.Application.csproj",
       "projectName": "VetPlatform.Application",
-      "projectPath": "C:\\Programacion\\PBI01_pro_manzanillo\\src\\VetPlatform.Application\\VetPlatform.Application.csproj",
-      "packagesPath": "C:\\Users\\Usuario\\.nuget\\packages\\",
-      "outputPath": "C:\\Programacion\\PBI01_pro_manzanillo\\src\\VetPlatform.Application\\obj\\",
+      "projectPath": "C:\\Users\\tonyi\\OneDrive - Universidad Hispanoamericana\\Universidad\\VIII Cuatri\\Desarrollo de aplicaciones\\ProyectoImplementacionManzanilloUH\\src\\VetPlatform.Application\\VetPlatform.Application.csproj",
+      "packagesPath": "C:\\Users\\tonyi\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\tonyi\\OneDrive - Universidad Hispanoamericana\\Universidad\\VIII Cuatri\\Desarrollo de aplicaciones\\ProyectoImplementacionManzanilloUH\\src\\VetPlatform.Application\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Usuario\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\tonyi\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -175,6 +175,7 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -182,8 +183,8 @@
           "framework": "net8.0",
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Programacion\\PBI01_pro_manzanillo\\src\\VetPlatform.Domain\\VetPlatform.Domain.csproj": {
-              "projectPath": "C:\\Programacion\\PBI01_pro_manzanillo\\src\\VetPlatform.Domain\\VetPlatform.Domain.csproj"
+            "C:\\Users\\tonyi\\OneDrive - Universidad Hispanoamericana\\Universidad\\VIII Cuatri\\Desarrollo de aplicaciones\\ProyectoImplementacionManzanilloUH\\src\\VetPlatform.Domain\\VetPlatform.Domain.csproj": {
+              "projectPath": "C:\\Users\\tonyi\\OneDrive - Universidad Hispanoamericana\\Universidad\\VIII Cuatri\\Desarrollo de aplicaciones\\ProyectoImplementacionManzanilloUH\\src\\VetPlatform.Domain\\VetPlatform.Domain.csproj"
             }
           }
         }
@@ -234,7 +235,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.401/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.402/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
