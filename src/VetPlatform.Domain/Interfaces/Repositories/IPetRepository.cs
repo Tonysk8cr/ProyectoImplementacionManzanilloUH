@@ -14,4 +14,5 @@ public interface IPetRepository : IBaseRepository<Pet>
 {
     Task<Pet?> GetByQrCodeAsync(string qrCode, CancellationToken ct = default);
     Task<IReadOnlyList<Pet>> GetByOwnerAsync(Guid ownerId, CancellationToken ct = default);
+    Task<IReadOnlyList<Pet>> GetByAttendingVetAsync(Guid vetUserId, CancellationToken ct = default);
 }

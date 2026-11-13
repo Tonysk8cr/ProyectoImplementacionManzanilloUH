@@ -11,3 +11,16 @@ C:\Programacion\PBI01_pro_manzanillo\src\VetPlatform.Domain\obj\Debug\net8.0\ref
 C:\Programacion\PBI01_pro_manzanillo\src\VetPlatform.Domain\obj\Debug\net8.0\VetPlatform.Domain.pdb
 C:\Programacion\PBI01_pro_manzanillo\src\VetPlatform.Domain\obj\Debug\net8.0\ref\VetPlatform.Domain.dll
 C:\Programacion\PBI01_pro_manzanillo\src\VetPlatform.Domain\obj\Debug\net8.0\VetPlatf.8B3CABF2.Up2Date
+C:\Users\tonyi\OneDrive - Universidad Hispanoamericana\Universidad\VIII Cuatri\Desarrollo de aplicaciones\ProyectoImplementacionManzanilloUH\src\VetPlatform.Domain\bin\Debug\net8.0\VetPlatform.Domain.deps.json
+C:\Users\tonyi\OneDrive - Universidad Hispanoamericana\Universidad\VIII Cuatri\Desarrollo de aplicaciones\ProyectoImplementacionManzanilloUH\src\VetPlatform.Domain\bin\Debug\net8.0\VetPlatform.Domain.dll
+C:\Users\tonyi\OneDrive - Universidad Hispanoamericana\Universidad\VIII Cuatri\Desarrollo de aplicaciones\ProyectoImplementacionManzanilloUH\src\VetPlatform.Domain\bin\Debug\net8.0\VetPlatform.Domain.pdb
+C:\Users\tonyi\OneDrive - Universidad Hispanoamericana\Universidad\VIII Cuatri\Desarrollo de aplicaciones\ProyectoImplementacionManzanilloUH\src\VetPlatform.Domain\obj\Debug\net8.0\VetPlatform.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\tonyi\OneDrive - Universidad Hispanoamericana\Universidad\VIII Cuatri\Desarrollo de aplicaciones\ProyectoImplementacionManzanilloUH\src\VetPlatform.Domain\obj\Debug\net8.0\VetPlatform.Domain.AssemblyInfoInputs.cache
+C:\Users\tonyi\OneDrive - Universidad Hispanoamericana\Universidad\VIII Cuatri\Desarrollo de aplicaciones\ProyectoImplementacionManzanilloUH\src\VetPlatform.Domain\obj\Debug\net8.0\VetPlatform.Domain.AssemblyInfo.cs
+C:\Users\tonyi\OneDrive - Universidad Hispanoamericana\Universidad\VIII Cuatri\Desarrollo de aplicaciones\ProyectoImplementacionManzanilloUH\src\VetPlatform.Domain\obj\Debug\net8.0\VetPlatform.Domain.csproj.CoreCompileInputs.cache
+C:\Users\tonyi\OneDrive - Universidad Hispanoamericana\Universidad\VIII Cuatri\Desarrollo de aplicaciones\ProyectoImplementacionManzanilloUH\src\VetPlatform.Domain\obj\Debug\net8.0\VetPlatform.Domain.sourcelink.json
+C:\Users\tonyi\OneDrive - Universidad Hispanoamericana\Universidad\VIII Cuatri\Desarrollo de aplicaciones\ProyectoImplementacionManzanilloUH\src\VetPlatform.Domain\obj\Debug\net8.0\VetPlatform.Domain.dll
+C:\Users\tonyi\OneDrive - Universidad Hispanoamericana\Universidad\VIII Cuatri\Desarrollo de aplicaciones\ProyectoImplementacionManzanilloUH\src\VetPlatform.Domain\obj\Debug\net8.0\refint\VetPlatform.Domain.dll
+C:\Users\tonyi\OneDrive - Universidad Hispanoamericana\Universidad\VIII Cuatri\Desarrollo de aplicaciones\ProyectoImplementacionManzanilloUH\src\VetPlatform.Domain\obj\Debug\net8.0\VetPlatform.Domain.pdb
+C:\Users\tonyi\OneDrive - Universidad Hispanoamericana\Universidad\VIII Cuatri\Desarrollo de aplicaciones\ProyectoImplementacionManzanilloUH\src\VetPlatform.Domain\obj\Debug\net8.0\ref\VetPlatform.Domain.dll
+C:\Users\tonyi\OneDrive - Universidad Hispanoamericana\Universidad\VIII Cuatri\Desarrollo de aplicaciones\ProyectoImplementacionManzanilloUH\src\VetPlatform.Domain\obj\Debug\net8.0\VetPlatf.8B3CABF2.Up2Date

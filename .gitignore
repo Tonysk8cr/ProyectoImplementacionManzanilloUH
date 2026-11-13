@@ -221,3 +221,16 @@ __marimo__/
 
 bin/
 obj/
+
+# .NET / Visual Studio
+.vs/
+*.user
+*.suo
+*.rsuser
+[Tt]est[Rr]esults/
+coverage.cobertura.xml
+
+# Secrets and local configuration (never commit)
+appsettings.*.local.json
+secrets.json
+*.pfx

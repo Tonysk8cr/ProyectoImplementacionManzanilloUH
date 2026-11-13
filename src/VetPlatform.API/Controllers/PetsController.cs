@@ -2,12 +2,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VetPlatform.API.ViewModels;
 using VetPlatform.Application.Features.Clinical;
+using VetPlatform.Domain.Enums;
 
 namespace VetPlatform.API.Controllers;
 
 /// <summary>
 /// Flujo Sprint 1 del propietario: lista de mascotas (PBI-01), registro de mascota (PBI-02/PBI-03)
-/// y detalle con historial clínico (PBI-04).
+/// y detalle con historial clínico (PBI-04). Historial de consultas del paciente para el médico veterinario.
 /// </summary>
 [Authorize]
 public class PetsController : MvcControllerBase
@@ -99,5 +100,41 @@ public class PetsController : MvcControllerBase
         }
 
         return View(viewModel);
+    }
+
+    /// <summary>Pacientes del médico veterinario (relación de regencia activa).</summary>
+    [HttpGet]
+    [Authorize(Roles = nameof(UserRole.AttendingVet))]
+    public async Task<IActionResult> Patients(CancellationToken ct)
+    {
+        var result = await _clinical.GetMyPatientsAsync(ct);
+        if (!result.Success)
+        {
+            AddErrors(result);
+            return View(Array.Empty<PetDto>());
+        }
+
+        return View(result.Value);
+    }
+
+    /// <summary>Detalle de una consulta, siempre en el contexto del paciente al que pertenece.</summary>
+    [HttpGet("Pets/{id:guid}/Consultations/{consultationId:guid}")]
+    public async Task<IActionResult> Consultation(Guid id, Guid consultationId, CancellationToken ct)
+    {
+        var petResult = await _clinical.GetPetAsync(id, ct);
+        var pet = petResult.Value;
+        if (!petResult.Success || pet is null)
+        {
+            AddErrors(petResult);
+            return View("Index", Array.Empty<PetDto>());
+        }
+
+        var result = await _clinical.GetPetConsultationAsync(id, consultationId, ct);
+        if (!result.Success)
+        {
+            AddErrors(result);
+        }
+
+        return View(new ConsultationDetailsViewModel { Pet = pet, Consultation = result.Value });
     }
 }

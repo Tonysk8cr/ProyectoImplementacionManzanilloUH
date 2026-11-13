@@ -1,0 +1,36 @@
+@model IReadOnlyList<VetPlatform.Application.Features.Clinical.PetDto>
+@{
+    ViewData["Title"] = "Mis pacientes";
+}
+
+<div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+<div class="page-header">
+    <div>
+        <h1>Mis pacientes</h1>
+        <p class="lead">Mascotas de las que eres médico veterinario regente. Selecciona una para ver su historial de consultas.</p>
+    </div>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="empty-state">
+        <p>No tienes pacientes asignados.</p>
+    </div>
+}
+else
+{
+    <div class="grid">
+        @foreach (var pet in Model)
+        {
+            <div class="card">
+                <h2 class="card-title">@pet.Name</h2>
+                <p class="card-subtitle">
+                    @pet.Species@(string.IsNullOrWhiteSpace(pet.Breed) ? "" : $" · {pet.Breed}") · QR @pet.QrCode
+                </p>
+                <a class="btn btn-primary" asp-action="Details" asp-route-id="@pet.Id"
+                   aria-label="Ver historial de @pet.Name">Ver historial</a>
+            </div>
+        }
+    </div>
+}
