@@ -27,7 +27,11 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration config)
     {
-        services.AddDbContext<AppDbContext>(o => o.UseNpgsql(config.GetConnectionString("DefaultConnection")));
+        var connectionString = config.GetConnectionString("DefaultConnection");
+        if (string.IsNullOrWhiteSpace(connectionString))
+            throw new InvalidOperationException(
+                "Falta ConnectionStrings:DefaultConnection. Configúrela en appsettings.Production.json o en la variable ConnectionStrings__DefaultConnection (ver database/SOMEE.md).");
+        services.AddDbContext<AppDbContext>(o => o.UseSqlServer(connectionString));
         services.AddInfrastructureCore(config);
 
         var jwt = config.GetSection("Jwt").Get<JwtOptions>() ?? new JwtOptions();

@@ -232,5 +232,12 @@ coverage.cobertura.xml
 
 # Secrets and local configuration (never commit)
 appsettings.*.local.json
+appsettings.Production.json
 secrets.json
 *.pfx
+*.local.md
+publish/
+# Credenciales de Somee compartidas por el canal privado (deben guardarse FUERA del repo)
+*credenciales*.txt
+*Credenciales*.txt
+[Ss]omee*.txt
