@@ -1,0 +1,72 @@
+@model AppointmentViewModel
+@{ ViewData["Title"] = "Agendar Cita"; }
+
+<div class="page-header">
+    <div><h1>Agendar Cita</h1><p class="lead">Elige tu mascota, consulta los horarios libres y confirma tu cita.</p></div>
+</div>
+<div asp-validation-summary="All" class="validation-summary" role="alert"></div>
+@if (Model.Pets.Count == 0)
+{
+    <div class="empty-state">
+        <p>Primero registra una mascota para poder agendar una cita.</p>
+        <a class="btn btn-primary" asp-controller="Pets" asp-action="Create">Registrar mascota</a>
+    </div>
+}
+else
+{
+    <section class="card">
+        <h2 class="card-title">1. Mascota y día de la consulta</h2>
+        <form asp-action="Index" method="get">
+            <div class="grid">
+                <div class="form-group">
+                    <label asp-for="PetId">Tu mascota</label>
+                    <select asp-for="PetId" required>
+                        <option value="">Selecciona tu mascota</option>
+                        @foreach (var pet in Model.Pets) { <option value="@pet.Id">@pet.Name (@pet.Species)</option> }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Date">Día</label>
+                    <input asp-for="Date" type="date" min="@Model.Today.ToString("yyyy-MM-dd")" required />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Reason">Motivo de la visita</label>
+                    <input asp-for="Reason" list="visit-reasons" maxlength="500" required />
+                    <datalist id="visit-reasons"><option value="Consulta"></option><option value="Vacunas"></option><option value="Revisión"></option></datalist>
+                </div>
+            </div>
+            <button class="btn btn-primary" type="submit">Ver horarios disponibles</button>
+        </form>
+    </section>
+    @if (Model.PetId.HasValue && Model.Pets.Any(p => p.Id == Model.PetId))
+    {
+        <section class="card">
+            <h2 class="card-title">2. Elige un horario y confirma</h2>
+            <p>Para <strong>@Model.Pets.First(p => p.Id == Model.PetId).Name</strong> · @Model.Date?.ToString("dd/MM/yyyy") · @Model.Reason</p>
+            <p class="field-hint">Todos los horarios se muestran en hora de Costa Rica (UTC-6).</p>
+            @if (Model.Slots.Count == 0)
+            {
+                <p role="status">No hay horarios disponibles para este día. Selecciona otra fecha.</p>
+            }
+            else
+            {
+                <form asp-action="Confirm" method="post">
+                    <input name="PetId" type="hidden" value="@Model.PetId" />
+                    <input name="Date" type="hidden" value="@Model.Date?.ToString("yyyy-MM-dd")" />
+                    <input name="Reason" type="hidden" value="@Model.Reason" />
+                    <div class="form-group">
+                        <label asp-for="SlotId">Horario disponible</label>
+                        <select asp-for="SlotId" required>
+                            <option value="">Selecciona la hora</option>
+                            @foreach (var slot in Model.Slots)
+                            {
+                                <option value="@slot.Id">@slot.StartTime.ToString("HH:mm") · @slot.Clinic · @slot.Vet</option>
+                            }
+                        </select>
+                    </div>
+                    <button class="btn btn-success" type="submit">Confirmar Cita</button>
+                </form>
+            }
+        </section>
+    }
+}

@@ -152,7 +152,10 @@ public class AvailabilitySlotRepository : BaseRepository<AvailabilitySlot>, IAva
         var q = Set.AsQueryable();
         if (clinicId.HasValue) q = q.Where(s => s.ClinicId == clinicId);
         if (vetUserId.HasValue) q = q.Where(s => s.VetUserId == vetUserId);
-        if (onlyFree) q = q.Where(s => !s.IsBooked);
+        if (onlyFree) q = q.Where(s => !s.IsBooked &&
+            !Db.Appointments.Any(a => a.SlotId == s.Id && a.Status == Appointment.Statuses.Booked) &&
+            Db.Clinics.Any(c => c.Id == s.ClinicId && c.Status == ClinicStatus.Active) &&
+            Db.ClinicMembers.Any(m => m.ClinicId == s.ClinicId && m.UserId == s.VetUserId && m.LeftAt == null));
         var list = await q.ToListAsync(ct);
         if (date.HasValue) list = list.Where(s => DateOnly.FromDateTime(s.StartTime.UtcDateTime) == date).ToList();
         return list.OrderBy(s => s.StartTime).ToList();

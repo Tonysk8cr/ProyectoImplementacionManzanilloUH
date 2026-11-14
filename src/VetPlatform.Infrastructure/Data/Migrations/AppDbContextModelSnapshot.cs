@@ -820,6 +820,11 @@ namespace VetPlatform.Infrastructure.Data.Migrations
                     b.Property<Guid>("PetId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
                     b.Property<Guid>("SlotId")
                         .HasColumnType("uuid");
 

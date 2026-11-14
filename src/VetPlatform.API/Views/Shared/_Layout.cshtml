@@ -15,6 +15,7 @@
                 @if (User.Identity?.IsAuthenticated == true)
                 {
                     <a asp-controller="Pets" asp-action="Index">Mis mascotas</a>
+                    <a asp-controller="Appointments" asp-action="Index">Agendar Cita</a>
                     <span class="nav-user">@User.Identity.Name</span>
                     <form asp-controller="Account" asp-action="Logout" method="post" class="inline-form">
                         <button type="submit" class="btn btn-link">Cerrar sesión</button>
