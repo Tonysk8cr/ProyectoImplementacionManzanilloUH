@@ -60,6 +60,8 @@ public class SchedulingService : ISchedulingService
     {
         var v = await _bookValidator.ValidateAsync(cmd, ct);
         if (!v.IsValid) return Result<AppointmentDto>.Invalid(v.Errors.Select(e => e.ErrorMessage).ToArray());
+        if (string.IsNullOrWhiteSpace(cmd.Reason) || cmd.Reason.Length > 500)
+            return Result<AppointmentDto>.Invalid("Indique el motivo de la cita (máximo 500 caracteres).");
         var pet = await _pets.GetByIdAsync(cmd.PetId, ct);
         if (pet == null) return Result<AppointmentDto>.NotFound("Mascota no encontrada.");
         if (pet.OwnerId != _user.UserId) return Result<AppointmentDto>.Forbidden("Solo el tutor puede reservar citas para su mascota.");
@@ -82,6 +84,7 @@ public class SchedulingService : ISchedulingService
                 var appt = new Appointment { PetId = pet.Id, OwnerId = pet.OwnerId, ClinicId = slot.ClinicId, VetUserId = slot.VetUserId,
                     SlotId = slot.Id, CreatedAt = _time.GetUtcNow(), Status = Appointment.Statuses.Booked };
                 await _appointments.AddAsync(appt, ct);
+                await _notifications.EnqueueAppointmentReminderAsync(pet.OwnerId, appt.Id, pet.Name, cmd.Reason.Trim(), slot.StartTime, ct);
                 await _notifications.EnqueueAsync(slot.VetUserId, "Nueva cita", $"Cita para {pet.Name} el {slot.StartTime:u}.", appt.Id, "Appointment", ct);
                 await _notifications.EnqueueAsync(pet.OwnerId, "Cita confirmada", $"Cita confirmada para {pet.Name} el {slot.StartTime:u}.", appt.Id, "Appointment", ct);
                 await _uow.SaveChangesAsync(ct);

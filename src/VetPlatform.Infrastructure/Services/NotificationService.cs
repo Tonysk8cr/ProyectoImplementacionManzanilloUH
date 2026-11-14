@@ -1,6 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using VetPlatform.Infrastructure.Data;
+using VetPlatform.Domain.Entities.Scheduling;
 using VetPlatform.Application.Common;
 using VetPlatform.Domain.Entities.Notifications;
 using VetPlatform.Domain.Enums;
@@ -16,9 +19,13 @@ public class NotificationService : INotificationService
     private readonly IUnitOfWork _uow;
     private readonly TimeProvider _time;
     private readonly ILogger<NotificationService> _log;
+    private readonly AppDbContext _db;
 
-    public NotificationService(INotificationRepository repo, INotificationSender sender, IUnitOfWork uow, TimeProvider time, ILogger<NotificationService> log)
-    { _repo = repo; _sender = sender; _uow = uow; _time = time; _log = log; }
+    public NotificationService(INotificationRepository repo, INotificationSender sender, IUnitOfWork uow, TimeProvider time, ILogger<NotificationService> log, AppDbContext db)
+    { _repo = repo; _sender = sender; _uow = uow; _time = time; _log = log; _db = db; }
+
+    public Task EnqueueAppointmentReminderAsync(Guid ownerId, Guid appointmentId, string petName, string reason, DateTimeOffset at, CancellationToken ct = default) =>
+        _repo.AddAsync(ReminderService.Create(ownerId, appointmentId, ReminderService.AppointmentReminder, petName, reason, at, _time.GetUtcNow()), ct);
 
     /// <summary>Stages the notification; it is persisted by the caller's SaveChanges (same transaction as the business act).</summary>
     public Task EnqueueAsync(Guid recipientUserId, string subject, string body, Guid? relatedEntityId = null, string? relatedEntityType = null, CancellationToken ct = default) =>
@@ -34,6 +41,18 @@ public class NotificationService : INotificationService
         var sent = 0;
         foreach (var n in pending)
         {
+            ct.ThrowIfCancellationRequested();
+            if (n.EventAt.HasValue && n.EventAt <= _time.GetUtcNow())
+            {
+                n.Status = NotificationStatus.Cancelled;
+                continue;
+            }
+            if (n.RelatedEntityType == ReminderService.AppointmentReminder &&
+                !await _db.Appointments.AsNoTracking().AnyAsync(a => a.Id == n.RelatedEntityId && a.Status == Appointment.Statuses.Booked, ct))
+            {
+                n.Status = NotificationStatus.Cancelled;
+                continue;
+            }
             try
             {
                 await _sender.SendAsync(n.RecipientUserId, n.Subject, n.Body, ct);
@@ -41,7 +60,7 @@ public class NotificationService : INotificationService
                 n.SentAt = _time.GetUtcNow();
                 sent++;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not OperationCanceledException)
             {
                 n.RetryCount++;
                 n.Status = NotificationStatus.Failed;

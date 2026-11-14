@@ -11,6 +11,8 @@ public class Notification : BaseEntity
     public NotificationStatus Status { get; set; } = NotificationStatus.Pending;
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset? SentAt { get; set; }
+    public DateTimeOffset? NotBefore { get; set; }
+    public DateTimeOffset? EventAt { get; set; }
     public int RetryCount { get; set; }
     public Guid? RelatedEntityId { get; set; }
     public string? RelatedEntityType { get; set; }

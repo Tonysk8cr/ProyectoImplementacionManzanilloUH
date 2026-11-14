@@ -175,9 +175,18 @@ public class AppointmentRepository : BaseRepository<Appointment>, IAppointmentRe
 
 public class NotificationRepository : BaseRepository<Notification>, INotificationRepository
 {
-    public NotificationRepository(AppDbContext db) : base(db) { }
-    public async Task<IReadOnlyList<Notification>> GetPendingAsync(int maxRetries, int batchSize, CancellationToken ct = default) =>
-        await Set.Where(n => n.Status != NotificationStatus.Sent && n.RetryCount < maxRetries).OrderBy(n => n.Id).Take(batchSize).ToListAsync(ct);
+    private readonly TimeProvider _time;
+    private readonly AppDbContext _db;
+    public NotificationRepository(AppDbContext db, TimeProvider time) : base(db) { _time = time; _db = db; }
+    public async Task<IReadOnlyList<Notification>> GetPendingAsync(int maxRetries, int batchSize, CancellationToken ct = default)
+    {
+        var now = _time.GetUtcNow();
+        var query = Set.Where(n => (n.Status == NotificationStatus.Pending || n.Status == NotificationStatus.Failed) && n.RetryCount < maxRetries);
+        // SQLite (used in tests) cannot compare DateTimeOffset in SQL.
+        if (_db.Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
+            return (await query.ToListAsync(ct)).Where(n => n.NotBefore == null || n.NotBefore <= now).OrderBy(n => n.CreatedAt).Take(batchSize).ToList();
+        return await query.Where(n => n.NotBefore == null || n.NotBefore <= now).OrderBy(n => n.CreatedAt).Take(batchSize).ToListAsync(ct);
+    }
     public async Task<IReadOnlyList<Notification>> GetByRecipientAsync(Guid r, CancellationToken ct = default) =>
         await Set.Where(n => n.RecipientUserId == r).ToListAsync(ct);
 }

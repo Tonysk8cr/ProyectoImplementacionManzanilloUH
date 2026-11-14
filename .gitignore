@@ -221,3 +221,7 @@ __marimo__/
 
 bin/
 obj/
+
+# Caché y configuración personal de Visual Studio
+.vs/
+*.user

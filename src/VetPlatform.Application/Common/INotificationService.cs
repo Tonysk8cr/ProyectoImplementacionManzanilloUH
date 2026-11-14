@@ -5,6 +5,7 @@ public interface INotificationService
 {
     Task EnqueueAsync(Guid recipientUserId, string subject, string body, Guid? relatedEntityId = null, string? relatedEntityType = null, CancellationToken ct = default);
     Task<int> RetryPendingNotificationsAsync(CancellationToken ct = default);
+    Task EnqueueAppointmentReminderAsync(Guid ownerId, Guid appointmentId, string petName, string reason, DateTimeOffset at, CancellationToken ct = default);
 }
 
 public interface INotificationSender
