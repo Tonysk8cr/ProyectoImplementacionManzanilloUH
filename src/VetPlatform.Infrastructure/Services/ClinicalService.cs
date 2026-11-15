@@ -54,6 +54,14 @@ public class ClinicalService : IClinicalService
         return Result<IReadOnlyList<PetDto>>.Ok(pets.Select(p => p.ToDto()).ToList());
     }
 
+    public async Task<Result<IReadOnlyList<PetDto>>> GetMyPatientsAsync(CancellationToken ct = default)
+    {
+        if (_user.UserId is not { } actor || !_user.IsInRole(UserRole.AttendingVet))
+            return Result<IReadOnlyList<PetDto>>.Forbidden("Solo el médico veterinario puede consultar sus pacientes.");
+        var pets = await _pets.GetByAttendingVetAsync(actor, ct);
+        return Result<IReadOnlyList<PetDto>>.Ok(pets.Select(p => p.ToDto()).ToList());
+    }
+
     public async Task<Result<PetDto>> CreatePetAsync(CreatePetCommand cmd, CancellationToken ct = default)
     {
         if (_user.UserId is not { } actor || !_user.IsInRole(UserRole.PetOwner) || cmd.OwnerId != actor)
@@ -91,7 +99,7 @@ public class ClinicalService : IClinicalService
         var emergencies = await _emergencyAttendances.GetByClinicalRecordAsync(record.Id, ct);
         await _audit.LogAsync(Actor, AuditAction.Read, "ClinicalRecord", record.Id.ToString(), _user.OrganizationId, AuditLog.Results.Allowed, $"via={level}", ct);
         return Result<ClinicalRecordDto>.Ok(new ClinicalRecordDto(record.Id, record.PetId, record.CreatedAt,
-            record.Consultations.OrderByDescending(c => c.AttendanceDate).Select(c => c.ToDto()).ToList(),
+            record.Consultations.OrderByDescending(c => c.AttendanceDate).ThenByDescending(c => c.RegistrationDate).ThenBy(c => c.Id).Select(c => c.ToDto()).ToList(),
             emergencies.OrderByDescending(e => e.AttendanceDate).Select(e => new EmergencyAttendanceSummaryDto(e.Id, e.VetUserId, e.AttendanceDate, e.Findings, e.Actions, e.Instructions)).ToList()));
     }
 
@@ -118,7 +126,13 @@ public class ClinicalService : IClinicalService
         return Result<ConsultationDto>.Ok(c.ToDto());
     }
 
-    public async Task<Result<ConsultationDto>> GetConsultationAsync(Guid id, CancellationToken ct = default)
+    public Task<Result<ConsultationDto>> GetConsultationAsync(Guid id, CancellationToken ct = default) =>
+        GetConsultationCoreAsync(id, null, ct);
+
+    public Task<Result<ConsultationDto>> GetPetConsultationAsync(Guid petId, Guid consultationId, CancellationToken ct = default) =>
+        GetConsultationCoreAsync(consultationId, petId, ct);
+
+    private async Task<Result<ConsultationDto>> GetConsultationCoreAsync(Guid id, Guid? expectedPetId, CancellationToken ct)
     {
         var c = await _consultations.GetWithDetailsAsync(id, ct);
         if (c == null) return Result<ConsultationDto>.NotFound("Consulta no encontrada.");
@@ -126,6 +140,9 @@ public class ClinicalService : IClinicalService
         var pet = record == null ? null : await _pets.GetByIdAsync(record.PetId, ct);
         if (pet == null || await _guard.GetReadAccessAsync(pet, Actor, _user.Roles, ct) == ClinicalAccessLevel.None)
             return await DenyAsync<ConsultationDto>("Consultation", id, ct: ct);
+        // Never show a consultation under a different patient than the one it belongs to.
+        if (expectedPetId is { } petId && pet.Id != petId)
+            return Result<ConsultationDto>.NotFound("La consulta no pertenece a este paciente.");
         await _audit.LogAsync(Actor, AuditAction.Read, "Consultation", id.ToString(), _user.OrganizationId, AuditLog.Results.Allowed, null, ct);
         return Result<ConsultationDto>.Ok(c.ToDto());
     }

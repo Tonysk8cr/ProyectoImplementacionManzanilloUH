@@ -1,0 +1,14 @@
+@model VetPlatform.API.ViewModels.OwnerProfileViewModel
+@{
+    ViewData["Title"] = "Registrar mis datos";
+}
+
+<div class="form-card">
+    <h1>Registrar mis datos</h1>
+    <p class="lead">Completa tus datos básicos de propietario. Tu nombre y correo se toman de tu cuenta.</p>
+
+    <form asp-action="Create" method="post" novalidate>
+        <partial name="_OwnerForm" model="Model" />
+        <button type="submit" class="btn btn-primary btn-block">Guardar mis datos</button>
+    </form>
+</div>

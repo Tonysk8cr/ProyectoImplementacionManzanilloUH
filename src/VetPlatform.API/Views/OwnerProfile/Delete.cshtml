@@ -1,0 +1,20 @@
+@model VetPlatform.Application.Features.Owners.OwnerProfileDto
+@{
+    ViewData["Title"] = "Eliminar mis datos";
+}
+
+<div class="form-card">
+    <h1>Eliminar mis datos</h1>
+    <p class="lead">
+        ¿Seguro que quieres eliminar tus datos de propietario (identificación <strong>@Model.IdentificationNumber</strong>)?
+        Tu cuenta y tus mascotas no se eliminan; podrás volver a registrar tus datos cuando quieras.
+    </p>
+
+    <form asp-action="Delete" method="post">
+        <button type="submit" class="btn btn-block" style="background:var(--danger); color:#fff;">Sí, eliminar</button>
+    </form>
+
+    <p class="lead" style="margin-top:1rem; text-align:center;">
+        <a asp-action="Index">Cancelar</a>
+    </p>
+</div>

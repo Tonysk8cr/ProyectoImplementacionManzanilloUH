@@ -70,6 +70,9 @@ public class PetRepository : BaseRepository<Pet>, IPetRepository
     public Task<Pet?> GetByQrCodeAsync(string qr, CancellationToken ct = default) => Set.FirstOrDefaultAsync(p => p.QrCode == qr, ct);
     public async Task<IReadOnlyList<Pet>> GetByOwnerAsync(Guid ownerId, CancellationToken ct = default) =>
         await Set.Where(p => p.OwnerId == ownerId).ToListAsync(ct);
+    public async Task<IReadOnlyList<Pet>> GetByAttendingVetAsync(Guid vetUserId, CancellationToken ct = default) =>
+        await Set.Where(p => Db.AttendingVetRelationships.Any(r => r.PetId == p.Id && r.VetUserId == vetUserId && r.IsActive))
+            .OrderBy(p => p.Name).ToListAsync(ct);
 }
 
 public class ClinicalRecordRepository : BaseRepository<ClinicalRecord>, IClinicalRecordRepository

@@ -372,6 +372,7 @@ h2 {
 .detail-list dd {
     margin: 0.2rem 0 0;
     font-weight: 600;
+    overflow-wrap: anywhere; /* el código QR es largo y desbordaba la celda */
 }
 
 .consultation {
@@ -427,6 +428,22 @@ h2 {
     margin: 0;
     padding-left: 1.1rem;
     font-size: 0.9rem;
+}
+
+/* ---------- Historial de consultas ---------- */
+
+.consultation-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 0.6rem;
+}
+
+.consultation-preview {
+    margin: 0.4rem 0 0;
+    overflow-wrap: anywhere;
 }
 
 /* ---------- Estado vacío ---------- */

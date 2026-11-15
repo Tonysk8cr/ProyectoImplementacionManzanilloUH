@@ -48,8 +48,12 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// Health check para Azure App Service / balanceadores.
-app.MapGet("/health", () => Results.Ok(new { status = "ok" })).AllowAnonymous();
+// Health check para Somee / balanceadores: incluye si la app llega a la base de datos (sin exponer detalles).
+app.MapGet("/health", async (AppDbContext db, CancellationToken ct) =>
+    await db.Database.CanConnectAsync(ct)
+        ? Results.Ok(new { status = "ok", database = "ok" })
+        : Results.Json(new { status = "degraded", database = "unreachable" }, statusCode: StatusCodes.Status503ServiceUnavailable))
+    .AllowAnonymous();
 
 app.Run();
 

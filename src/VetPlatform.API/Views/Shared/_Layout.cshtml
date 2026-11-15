@@ -14,8 +14,13 @@
             <div class="nav-links">
                 @if (User.Identity?.IsAuthenticated == true)
                 {
+                    @if (User.IsInRole("AttendingVet"))
+                    {
+                        <a asp-controller="Pets" asp-action="Patients">Mis pacientes</a>
+                    }
                     <a asp-controller="Pets" asp-action="Index">Mis mascotas</a>
                     <a asp-controller="Appointments" asp-action="Index">Agendar Cita</a>
+                    <a asp-controller="OwnerProfile" asp-action="Index">Mi perfil</a>
                     <span class="nav-user">@User.Identity.Name</span>
                     <form asp-controller="Account" asp-action="Logout" method="post" class="inline-form">
                         <button type="submit" class="btn btn-link">Cerrar sesión</button>

@@ -22,6 +22,7 @@ public class AppDbContext : DbContext
     public DbSet<ClinicMember> ClinicMembers => Set<ClinicMember>();
     public DbSet<Store> Stores => Set<Store>();
     public DbSet<Pet> Pets => Set<Pet>();
+    public DbSet<OwnerProfile> OwnerProfiles => Set<OwnerProfile>();
     public DbSet<ClinicalRecord> ClinicalRecords => Set<ClinicalRecord>();
     public DbSet<AttendingVetRelationship> AttendingVetRelationships => Set<AttendingVetRelationship>();
     public DbSet<Consultation> Consultations => Set<Consultation>();
@@ -46,7 +47,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<ClinicMember>().HasIndex(x => new { x.ClinicId, x.UserId });
         modelBuilder.Entity<Clinic>().HasMany(c => c.Members).WithOne().HasForeignKey(m => m.ClinicId);
         modelBuilder.Entity<Store>().Property(x => x.Name).HasMaxLength(200).IsRequired();
-        modelBuilder.Entity<AttendingVetRelationship>().HasIndex(x => x.PetId).IsUnique().HasFilter("\"IsActive\" = TRUE");
+        modelBuilder.Entity<AttendingVetRelationship>().HasIndex(x => x.PetId).IsUnique().HasFilter("[IsActive] = 1");
         modelBuilder.Entity<EmergencyAccess>().HasIndex(x => new { x.PetId, x.VetUserId, x.Status });
         modelBuilder.Entity<AvailabilitySlot>().Property(x => x.Version).IsConcurrencyToken();
         modelBuilder.Entity<AvailabilitySlot>().HasIndex(x => new { x.VetUserId, x.StartTime });

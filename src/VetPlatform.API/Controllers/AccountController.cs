@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VetPlatform.API.ViewModels;
 using VetPlatform.Application.Features.Identity;
+using VetPlatform.Application.Features.Owners;
 using VetPlatform.Domain.Enums;
 
 namespace VetPlatform.API.Controllers;
@@ -16,11 +17,13 @@ namespace VetPlatform.API.Controllers;
 public class AccountController : MvcControllerBase
 {
     private readonly IAuthService _authService;
+    private readonly IOwnerService _owners;
     private readonly ILogger<AccountController> _logger;
 
-    public AccountController(IAuthService authService, ILogger<AccountController> logger)
+    public AccountController(IAuthService authService, IOwnerService owners, ILogger<AccountController> logger)
     {
         _authService = authService;
+        _owners = owners;
         _logger = logger;
     }
 
@@ -46,9 +49,11 @@ public class AccountController : MvcControllerBase
             return View(model);
         }
 
-        // Sprint 1: el registro público crea siempre un propietario de mascotas.
-        var result = await _authService.RegisterAsync(
-            new RegisterUserCommand(model.Email, model.Password, model.FullName, UserRole.PetOwner));
+        // Sprint 1: el registro público crea siempre un propietario de mascotas
+        // (cuenta + cédula, teléfono y dirección en un solo paso).
+        var result = await _owners.RegisterOwnerAsync(
+            new RegisterOwnerCommand(model.Email, model.Password, model.FullName,
+                model.IdentificationNumber, model.Phone, model.Address));
 
         if (!result.Success)
         {

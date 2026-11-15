@@ -1,0 +1,95 @@
+@model VetPlatform.API.ViewModels.ConsultationDetailsViewModel
+@{
+    var pet = Model.Pet;
+    var consultation = Model.Consultation;
+    ViewData["Title"] = $"Consulta de {pet.Name}";
+}
+
+<div class="page-header">
+    <div>
+        <h1>Consulta de @pet.Name</h1>
+        <p class="lead">
+            Paciente: <strong>@pet.Name</strong> · @pet.Species@(string.IsNullOrWhiteSpace(pet.Breed) ? "" : $" · {pet.Breed}") · QR @pet.QrCode
+        </p>
+    </div>
+    <a class="btn" asp-action="Details" asp-route-id="@pet.Id">Volver al historial de @pet.Name</a>
+</div>
+
+<div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+@if (consultation is not null)
+{
+    var fecha = consultation.AttendanceDate.ToLocalTime().ToString("dd/MM/yyyy HH:mm");
+    <article class="card">
+        <div class="consultation-header">
+            <h2 class="card-title">Consulta · <time datetime="@consultation.AttendanceDate.ToString("o")">@fecha</time></h2>
+            <span class="badge">@consultation.Status</span>
+        </div>
+
+        <dl class="detail-list">
+            <div>
+                <dt>Fecha de atención</dt>
+                <dd>@fecha</dd>
+            </div>
+            <div>
+                <dt>Registrada el</dt>
+                <dd>@consultation.RegistrationDate.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</dd>
+            </div>
+            <div>
+                <dt>Fuente</dt>
+                <dd>@consultation.SourceType</dd>
+            </div>
+        </dl>
+
+        <div class="subsection">
+            <h4>Notas clínicas</h4>
+            <p class="consultation-preview">@(string.IsNullOrWhiteSpace(consultation.Notes) ? "Sin notas registradas." : consultation.Notes)</p>
+        </div>
+
+        <div class="subsection">
+            <h4>Indicaciones</h4>
+            <p class="consultation-preview">@(string.IsNullOrWhiteSpace(consultation.Instructions) ? "Sin indicaciones." : consultation.Instructions)</p>
+        </div>
+
+        <div class="subsection">
+            <h4>Prescripciones</h4>
+            @if (consultation.Prescriptions.Count == 0)
+            {
+                <p class="card-subtitle">Sin prescripciones.</p>
+            }
+            else
+            {
+                <ul>
+                    @foreach (var prescription in consultation.Prescriptions)
+                    {
+                        <li>
+                            <strong>@prescription.Medication</strong> — @prescription.Dosage,
+                            @prescription.Route, cada @prescription.Frequency durante
+                            @prescription.DurationDays día(s).
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+
+        <div class="subsection">
+            <h4>Adendas</h4>
+            @if (consultation.Addenda.Count == 0)
+            {
+                <p class="card-subtitle">Sin adendas.</p>
+            }
+            else
+            {
+                <ul>
+                    @foreach (var addendum in consultation.Addenda.OrderBy(a => a.CreatedAt))
+                    {
+                        <li>
+                            <strong>@addendum.Reason:</strong> @addendum.Content
+                            <span class="card-subtitle">(@addendum.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm"))</span>
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+    </article>
+}
