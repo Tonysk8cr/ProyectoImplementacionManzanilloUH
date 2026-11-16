@@ -712,8 +712,14 @@ namespace VetPlatform.Infrastructure.Data.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<DateTimeOffset?>("EventAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("NotBefore")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("RecipientUserId")
                         .HasColumnType("uniqueidentifier");
@@ -859,6 +865,11 @@ namespace VetPlatform.Infrastructure.Data.Migrations
 
                     b.Property<Guid>("PetId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<Guid>("SlotId")
                         .HasColumnType("uniqueidentifier");

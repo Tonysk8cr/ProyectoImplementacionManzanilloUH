@@ -112,6 +112,7 @@ public static class DependencyInjection
         services.AddScoped<IEmergencyService, EmergencyService>();
         services.AddScoped<IMarketplaceService, MarketplaceService>();
         services.AddScoped<ISchedulingService, SchedulingService>();
+        services.AddScoped<IReminderService, ReminderService>();
         return services;
     }
 }

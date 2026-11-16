@@ -12,6 +12,7 @@
     @if (User.Identity?.IsAuthenticated == true)
     {
         <a class="btn btn-primary" asp-controller="Pets" asp-action="Index">Ver mis mascotas</a>
+        <a class="btn btn-success" asp-controller="Appointments" asp-action="Index">Agendar Cita</a>
     }
     else
     {
