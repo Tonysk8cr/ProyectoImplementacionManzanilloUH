@@ -11,6 +11,7 @@ public class Appointment : BaseEntity
     public Guid SlotId { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
     public string Status { get; set; } = Statuses.Booked;
+    public string Reason { get; set; } = "Consulta veterinaria";
 
     public static class Statuses
     {

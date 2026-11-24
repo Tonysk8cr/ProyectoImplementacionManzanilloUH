@@ -1,12 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "Ab35sQREhhY=",
+  "dgSpecHash": "iXkW/KDNz5Q=",
   "success": true,
-  "projectFilePath": "C:\\Programacion\\PBI01_pro_manzanillo\\src\\VetPlatform.Application\\VetPlatform.Application.csproj",
+  "projectFilePath": "C:\\Users\\tonyi\\OneDrive - Universidad Hispanoamericana\\Universidad\\VIII Cuatri\\Desarrollo de aplicaciones\\ProyectoImplementacionManzanilloUH\\src\\VetPlatform.Application\\VetPlatform.Application.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Usuario\\.nuget\\packages\\fluentvalidation\\11.9.2\\fluentvalidation.11.9.2.nupkg.sha512",
-    "C:\\Users\\Usuario\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.9.2\\fluentvalidation.dependencyinjectionextensions.11.9.2.nupkg.sha512",
-    "C:\\Users\\Usuario\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\8.0.1\\microsoft.extensions.dependencyinjection.abstractions.8.0.1.nupkg.sha512"
+    "C:\\Users\\tonyi\\.nuget\\packages\\fluentvalidation\\11.9.2\\fluentvalidation.11.9.2.nupkg.sha512",
+    "C:\\Users\\tonyi\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.9.2\\fluentvalidation.dependencyinjectionextensions.11.9.2.nupkg.sha512",
+    "C:\\Users\\tonyi\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\8.0.1\\microsoft.extensions.dependencyinjection.abstractions.8.0.1.nupkg.sha512"
   ],
   "logs": []
 }

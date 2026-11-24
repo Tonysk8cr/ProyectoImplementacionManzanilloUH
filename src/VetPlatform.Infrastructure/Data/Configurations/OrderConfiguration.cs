@@ -15,3 +15,8 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         b.HasQueryFilter(x => !x.IsDeleted);
     }
 }
+
+public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
+{
+    public void Configure(EntityTypeBuilder<OrderItem> b) => b.Property(x => x.UnitPrice).HasPrecision(12, 2); // same as Product.Price
+}

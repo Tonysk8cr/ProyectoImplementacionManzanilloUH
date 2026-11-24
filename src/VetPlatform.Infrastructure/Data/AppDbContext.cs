@@ -47,7 +47,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<ClinicMember>().HasIndex(x => new { x.ClinicId, x.UserId });
         modelBuilder.Entity<Clinic>().HasMany(c => c.Members).WithOne().HasForeignKey(m => m.ClinicId);
         modelBuilder.Entity<Store>().Property(x => x.Name).HasMaxLength(200).IsRequired();
-        modelBuilder.Entity<AttendingVetRelationship>().HasIndex(x => x.PetId).IsUnique().HasFilter("\"IsActive\" = TRUE");
+        modelBuilder.Entity<AttendingVetRelationship>().HasIndex(x => x.PetId).IsUnique().HasFilter("[IsActive] = 1");
         modelBuilder.Entity<EmergencyAccess>().HasIndex(x => new { x.PetId, x.VetUserId, x.Status });
         modelBuilder.Entity<AvailabilitySlot>().Property(x => x.Version).IsConcurrencyToken();
         modelBuilder.Entity<AvailabilitySlot>().HasIndex(x => new { x.VetUserId, x.StartTime });

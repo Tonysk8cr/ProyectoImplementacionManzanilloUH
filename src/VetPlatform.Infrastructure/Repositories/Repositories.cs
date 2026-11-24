@@ -70,6 +70,9 @@ public class PetRepository : BaseRepository<Pet>, IPetRepository
     public Task<Pet?> GetByQrCodeAsync(string qr, CancellationToken ct = default) => Set.FirstOrDefaultAsync(p => p.QrCode == qr, ct);
     public async Task<IReadOnlyList<Pet>> GetByOwnerAsync(Guid ownerId, CancellationToken ct = default) =>
         await Set.Where(p => p.OwnerId == ownerId).ToListAsync(ct);
+    public async Task<IReadOnlyList<Pet>> GetByAttendingVetAsync(Guid vetUserId, CancellationToken ct = default) =>
+        await Set.Where(p => Db.AttendingVetRelationships.Any(r => r.PetId == p.Id && r.VetUserId == vetUserId && r.IsActive))
+            .OrderBy(p => p.Name).ToListAsync(ct);
 }
 
 public class ClinicalRecordRepository : BaseRepository<ClinicalRecord>, IClinicalRecordRepository
@@ -152,7 +155,10 @@ public class AvailabilitySlotRepository : BaseRepository<AvailabilitySlot>, IAva
         var q = Set.AsQueryable();
         if (clinicId.HasValue) q = q.Where(s => s.ClinicId == clinicId);
         if (vetUserId.HasValue) q = q.Where(s => s.VetUserId == vetUserId);
-        if (onlyFree) q = q.Where(s => !s.IsBooked);
+        if (onlyFree) q = q.Where(s => !s.IsBooked &&
+            !Db.Appointments.Any(a => a.SlotId == s.Id && a.Status == Appointment.Statuses.Booked) &&
+            Db.Clinics.Any(c => c.Id == s.ClinicId && c.Status == ClinicStatus.Active) &&
+            Db.ClinicMembers.Any(m => m.ClinicId == s.ClinicId && m.UserId == s.VetUserId && m.LeftAt == null));
         var list = await q.ToListAsync(ct);
         if (date.HasValue) list = list.Where(s => DateOnly.FromDateTime(s.StartTime.UtcDateTime) == date).ToList();
         return list.OrderBy(s => s.StartTime).ToList();
@@ -175,9 +181,18 @@ public class AppointmentRepository : BaseRepository<Appointment>, IAppointmentRe
 
 public class NotificationRepository : BaseRepository<Notification>, INotificationRepository
 {
-    public NotificationRepository(AppDbContext db) : base(db) { }
-    public async Task<IReadOnlyList<Notification>> GetPendingAsync(int maxRetries, int batchSize, CancellationToken ct = default) =>
-        await Set.Where(n => n.Status != NotificationStatus.Sent && n.RetryCount < maxRetries).OrderBy(n => n.Id).Take(batchSize).ToListAsync(ct);
+    private readonly TimeProvider _time;
+    private readonly AppDbContext _db;
+    public NotificationRepository(AppDbContext db, TimeProvider time) : base(db) { _time = time; _db = db; }
+    public async Task<IReadOnlyList<Notification>> GetPendingAsync(int maxRetries, int batchSize, CancellationToken ct = default)
+    {
+        var now = _time.GetUtcNow();
+        var query = Set.Where(n => (n.Status == NotificationStatus.Pending || n.Status == NotificationStatus.Failed) && n.RetryCount < maxRetries);
+        // SQLite (used in tests) cannot compare DateTimeOffset in SQL.
+        if (_db.Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
+            return (await query.ToListAsync(ct)).Where(n => n.NotBefore == null || n.NotBefore <= now).OrderBy(n => n.CreatedAt).Take(batchSize).ToList();
+        return await query.Where(n => n.NotBefore == null || n.NotBefore <= now).OrderBy(n => n.CreatedAt).Take(batchSize).ToListAsync(ct);
+    }
     public async Task<IReadOnlyList<Notification>> GetByRecipientAsync(Guid r, CancellationToken ct = default) =>
         await Set.Where(n => n.RecipientUserId == r).ToListAsync(ct);
 }

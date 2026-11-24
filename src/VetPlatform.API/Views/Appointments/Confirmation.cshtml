@@ -1,0 +1,16 @@
+@model AppointmentConfirmationViewModel
+@{ ViewData["Title"] = "Cita confirmada"; }
+
+<section class="card">
+    <h1>Cita guardada correctamente</h1>
+    <p class="alert alert-success" role="status">Tu cita para @Model.Pet quedó confirmada.</p>
+    <dl>
+        <dt>Mascota</dt><dd>@Model.Pet</dd>
+        <dt>Fecha</dt><dd>@Model.StartTime.ToString("dd/MM/yyyy")</dd>
+        <dt>Hora</dt><dd>@Model.StartTime.ToString("HH:mm") (Costa Rica, UTC-6)</dd>
+        <dt>Motivo</dt><dd>@Model.Reason</dd>
+        <dt>Clínica</dt><dd>@Model.Clinic</dd>
+    </dl>
+    <a class="btn btn-primary" asp-action="Index">Agendar otra cita</a>
+    <a class="btn" asp-controller="Pets" asp-action="Index">Ver mis mascotas</a>
+</section>
