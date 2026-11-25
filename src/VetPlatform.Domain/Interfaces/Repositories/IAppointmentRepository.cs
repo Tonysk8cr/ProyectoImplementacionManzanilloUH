@@ -12,6 +12,13 @@ namespace VetPlatform.Domain.Interfaces.Repositories;
 
 public interface IAppointmentRepository : IBaseRepository<Appointment>
 {
-    Task<IReadOnlyList<Appointment>> GetByPetAsync(Guid petId, CancellationToken ct = default);
     Task<bool> ExistsActiveForSlotAsync(Guid slotId, CancellationToken ct = default);
+    Task<IReadOnlyList<AppointmentDetails>> SearchDetailsAsync(
+        Guid? appointmentId = null,
+        Guid? petId = null,
+        Guid? ownerId = null,
+        Guid? vetUserId = null,
+        Guid? clinicId = null,
+        IReadOnlyCollection<Guid>? clinicIds = null,
+        CancellationToken ct = default);
 }

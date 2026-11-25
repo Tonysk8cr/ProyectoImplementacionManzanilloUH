@@ -47,6 +47,23 @@ public class ClinicService : IClinicService
         return c == null ? Result<ClinicDto>.NotFound("Clínica no encontrada.") : Result<ClinicDto>.Ok(c.ToDto());
     }
 
+    public async Task<Result<IReadOnlyList<ClinicDto>>> GetActiveClinicsAsync(CancellationToken ct = default)
+    {
+        var clinics = await _clinics.GetActiveAsync(ct);
+        return Result<IReadOnlyList<ClinicDto>>.Ok(clinics.Select(c => c.ToDto()).ToList());
+    }
+
+    public async Task<Result<IReadOnlyList<ClinicDto>>> GetManagedClinicsAsync(CancellationToken ct = default)
+    {
+        if (_user.UserId is not { } actor ||
+            (!_user.IsInRole(UserRole.PlatformAdmin) && !_user.IsInRole(UserRole.ClinicAdmin)))
+            return Result<IReadOnlyList<ClinicDto>>.Forbidden("Solo el administrador de la clínica puede consultar su agenda.");
+
+        var clinics = await _clinics.GetManagedByUserAsync(
+            actor, _user.OrganizationIds, _user.IsInRole(UserRole.PlatformAdmin), ct);
+        return Result<IReadOnlyList<ClinicDto>>.Ok(clinics.Select(c => c.ToDto()).ToList());
+    }
+
     public async Task<Result<ClinicMemberDto>> AddMemberAsync(AddMemberCommand cmd, CancellationToken ct = default)
     {
         var clinic = await _clinics.GetByIdAsync(cmd.ClinicId, ct);

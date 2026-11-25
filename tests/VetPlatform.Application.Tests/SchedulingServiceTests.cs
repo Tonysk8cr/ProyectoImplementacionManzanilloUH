@@ -23,7 +23,8 @@ public class SchedulingServiceTests : IDisposable
         var s = await ClinicalScenario.CreateAsync(_f);
         var slot = await CreateSlot(s, 24);
         slot.Success.Should().BeTrue(string.Join(",", slot.Errors));
-        var appt = await _f.RunAs<ISchedulingService, Result<AppointmentDto>>(s.OwnerId, Owner, svc => svc.BookAppointmentAsync(new BookAppointmentCommand(s.PetId, slot.Value!.Id)));
+        var appt = await _f.RunAs<ISchedulingService, Result<AppointmentDto>>(s.OwnerId, Owner, svc => svc.BookAppointmentAsync(
+            new BookAppointmentCommand(s.ClinicId, s.PetId, slot.Value!.Id, "Consulta general")));
         appt.Success.Should().BeTrue(string.Join(",", appt.Errors));
         appt.Value!.Status.Should().Be("Booked");
 
@@ -41,9 +42,14 @@ public class SchedulingServiceTests : IDisposable
             svc => svc.CreatePetAsync(new VetPlatform.Application.Features.Clinical.CreatePetCommand(owner2, "Michi", "Gato", null, null)));
 
         // Both owners saw the slot as free; only the first confirmation wins.
-        (await _f.RunAs<ISchedulingService, Result<AppointmentDto>>(s.OwnerId, Owner, svc => svc.BookAppointmentAsync(new BookAppointmentCommand(s.PetId, slot.Value!.Id)))).Success.Should().BeTrue();
-        var second = await _f.RunAs<ISchedulingService, Result<AppointmentDto>>(owner2, Owner, svc => svc.BookAppointmentAsync(new BookAppointmentCommand(pet2.Value!.Id, slot.Value!.Id)));
+        (await _f.RunAs<ISchedulingService, Result<AppointmentDto>>(s.OwnerId, Owner, svc => svc.BookAppointmentAsync(
+            new BookAppointmentCommand(s.ClinicId, s.PetId, slot.Value!.Id, "Consulta general")))).Success.Should().BeTrue();
+        var second = await _f.RunAs<ISchedulingService, Result<AppointmentDto>>(owner2, Owner, svc => svc.BookAppointmentAsync(
+            new BookAppointmentCommand(s.ClinicId, pet2.Value!.Id, slot.Value!.Id, "Consulta general")));
         second.ErrorType.Should().Be(ErrorType.Conflict);
+        var ownerAppointments = await _f.RunAs<ISchedulingService, Result<IReadOnlyList<AppointmentDto>>>(
+            s.OwnerId, Owner, svc => svc.GetAppointmentsForCurrentUserAsync());
+        ownerAppointments.Value.Should().ContainSingle();
     }
 
     [Fact]
@@ -60,7 +66,86 @@ public class SchedulingServiceTests : IDisposable
         var s = await ClinicalScenario.CreateAsync(_f);
         var slot = await CreateSlot(s, 24);
         var other = await _f.SeedUserAsync(UserRole.PetOwner);
-        var r = await _f.RunAs<ISchedulingService, Result<AppointmentDto>>(other, Owner, svc => svc.BookAppointmentAsync(new BookAppointmentCommand(s.PetId, slot.Value!.Id)));
+        var r = await _f.RunAs<ISchedulingService, Result<AppointmentDto>>(other, Owner, svc => svc.BookAppointmentAsync(
+            new BookAppointmentCommand(s.ClinicId, s.PetId, slot.Value!.Id, "Consulta general")));
         r.ErrorType.Should().Be(ErrorType.Forbidden);
+    }
+
+    [Fact]
+    public async Task Appointment_summary_is_visible_to_owner_and_clinic_vet()
+    {
+        var s = await ClinicalScenario.CreateAsync(_f);
+        var slot = await CreateSlot(s, 24);
+        var booked = await _f.RunAs<ISchedulingService, Result<AppointmentDto>>(s.OwnerId, Owner, svc =>
+            svc.BookAppointmentAsync(new BookAppointmentCommand(s.ClinicId, s.PetId, slot.Value!.Id, "Vacunación")));
+
+        booked.Success.Should().BeTrue(string.Join(",", booked.Errors));
+        booked.Value!.ClinicName.Should().Be("Clínica Central");
+        booked.Value.PetName.Should().Be("Firulais");
+        booked.Value.Reason.Should().Be("Vacunación");
+        booked.Value.StartTime.Should().Be(slot.Value!.StartTime);
+        booked.Value.Status.Should().Be("Booked");
+
+        var ownerAppointments = await _f.RunAs<ISchedulingService, Result<IReadOnlyList<AppointmentDto>>>(
+            s.OwnerId, Owner, svc => svc.GetAppointmentsForCurrentUserAsync());
+        var vetAppointments = await _f.RunAs<ISchedulingService, Result<IReadOnlyList<AppointmentDto>>>(
+            s.VetId, new[] { UserRole.AttendingVet }, svc => svc.GetAppointmentsForCurrentUserAsync(s.ClinicId));
+
+        ownerAppointments.Value.Should().ContainSingle().Which.Id.Should().Be(booked.Value.Id);
+        vetAppointments.Value.Should().ContainSingle().Which.Should().BeEquivalentTo(ownerAppointments.Value!.Single());
+    }
+
+    [Fact]
+    public async Task Missing_booking_details_are_reported_without_registering_an_appointment()
+    {
+        var s = await ClinicalScenario.CreateAsync(_f);
+        var result = await _f.RunAs<ISchedulingService, Result<AppointmentDto>>(s.OwnerId, Owner, svc =>
+            svc.BookAppointmentAsync(new BookAppointmentCommand(Guid.Empty, Guid.Empty, Guid.Empty, " ")));
+
+        result.Success.Should().BeFalse();
+        result.Errors.Should().Contain(e => e.Contains("veterinaria"));
+        result.Errors.Should().Contain(e => e.Contains("mascota"));
+        result.Errors.Should().Contain(e => e.Contains("horario"));
+        result.Errors.Should().Contain(e => e.Contains("motivo"));
+
+        var appointments = await _f.RunAs<ISchedulingService, Result<IReadOnlyList<AppointmentDto>>>(
+            s.OwnerId, Owner, svc => svc.GetAppointmentsForCurrentUserAsync());
+        appointments.Value.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task Booking_rejects_a_clinic_that_does_not_own_the_selected_slot()
+    {
+        var s = await ClinicalScenario.CreateAsync(_f);
+        var slot = await CreateSlot(s, 24);
+        var result = await _f.RunAs<ISchedulingService, Result<AppointmentDto>>(s.OwnerId, Owner, svc =>
+            svc.BookAppointmentAsync(new BookAppointmentCommand(Guid.NewGuid(), s.PetId, slot.Value!.Id, "Consulta")));
+
+        result.ErrorType.Should().Be(ErrorType.Conflict);
+        var appointments = await _f.RunAs<ISchedulingService, Result<IReadOnlyList<AppointmentDto>>>(
+            s.OwnerId, Owner, svc => svc.GetAppointmentsForCurrentUserAsync());
+        appointments.Value.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task Availability_hides_slots_after_the_vet_leaves_the_clinic()
+    {
+        var s = await ClinicalScenario.CreateAsync(_f);
+        var slot = await CreateSlot(s, 24);
+        slot.Success.Should().BeTrue();
+
+        var removed = await _f.RunAs<VetPlatform.Application.Features.Organizations.IClinicService, Result<bool>>(
+            s.AdminId, Admin, svc => svc.RemoveMemberAsync(
+                new VetPlatform.Application.Features.Organizations.RemoveMemberCommand(s.ClinicId, s.VetId)));
+        removed.Success.Should().BeTrue(string.Join(",", removed.Errors));
+
+        var availability = await _f.RunAs<ISchedulingService, Result<IReadOnlyList<AvailabilitySlotDto>>>(
+            s.OwnerId, Owner, svc => svc.GetAvailabilityAsync(s.ClinicId, null, null));
+        availability.Value.Should().BeEmpty();
+
+        var staleBooking = await _f.RunAs<ISchedulingService, Result<AppointmentDto>>(s.OwnerId, Owner, svc =>
+            svc.BookAppointmentAsync(new BookAppointmentCommand(s.ClinicId, s.PetId, slot.Value!.Id, "Consulta")));
+        staleBooking.ErrorType.Should().Be(ErrorType.Conflict);
+        staleBooking.Errors.Should().Contain(e => e.Contains("seleccione otro horario"));
     }
 }

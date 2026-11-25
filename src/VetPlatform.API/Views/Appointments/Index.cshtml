@@ -1,0 +1,70 @@
+@model AppointmentsIndexViewModel
+@{
+    ViewData["Title"] = "Citas";
+}
+
+<div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+<div class="page-header">
+    <div>
+        <h1>@(Model.IsClinicManager ? "Gestión de citas" : "Mis citas")</h1>
+        <p class="lead">Consulta veterinaria, mascota, fecha, motivo y estado de cada cita.</p>
+    </div>
+    @if (User.IsInRole("PetOwner"))
+    {
+        <a class="btn btn-primary" asp-action="Book">Agendar cita</a>
+    }
+</div>
+
+@if (Model.IsClinicManager)
+{
+    <form asp-action="Index" method="get" class="card">
+        <div class="form-group">
+            <label for="clinicId">Agenda de la veterinaria</label>
+            <select id="clinicId" name="clinicId">
+                <option value="">Todas mis veterinarias</option>
+                @foreach (var clinic in Model.Clinics)
+                {
+                    <option value="@clinic.Id" selected="@(Model.SelectedClinicId == clinic.Id)">@clinic.Name</option>
+                }
+            </select>
+        </div>
+        <button class="btn" type="submit">Ver agenda</button>
+    </form>
+}
+
+@if (Model.Appointments.Count == 0)
+{
+    <div class="empty-state">
+        <p>No hay citas registradas para mostrar.</p>
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Veterinaria</th>
+                    <th>Mascota</th>
+                    <th>Fecha y hora</th>
+                    <th>Motivo</th>
+                    <th>Estado</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var appointment in Model.Appointments)
+                {
+                    <tr>
+                        <td>@appointment.ClinicName</td>
+                        <td>@appointment.PetName</td>
+                        <td>@appointment.StartTime.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@appointment.Reason</td>
+                        <td>@appointment.Status</td>
+                        <td><a asp-action="Confirmation" asp-route-id="@appointment.Id">Ver resumen</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

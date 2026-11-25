@@ -2749,23 +2749,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Usuario\\.nuget\\packages\\": {},
+    "C:\\Users\\winfl\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Programacion\\PBI01_pro_manzanillo\\src\\VetPlatform.API\\VetPlatform.API.csproj",
+      "projectUniqueName": "C:\\Users\\winfl\\Projects\\ProyectoImplementacionManzanilloUH\\src\\VetPlatform.API\\VetPlatform.API.csproj",
       "projectName": "VetPlatform.API",
-      "projectPath": "C:\\Programacion\\PBI01_pro_manzanillo\\src\\VetPlatform.API\\VetPlatform.API.csproj",
-      "packagesPath": "C:\\Users\\Usuario\\.nuget\\packages\\",
-      "outputPath": "C:\\Programacion\\PBI01_pro_manzanillo\\src\\VetPlatform.API\\obj\\",
+      "projectPath": "C:\\Users\\winfl\\Projects\\ProyectoImplementacionManzanilloUH\\src\\VetPlatform.API\\VetPlatform.API.csproj",
+      "packagesPath": "C:\\Users\\winfl\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\winfl\\Projects\\ProyectoImplementacionManzanilloUH\\src\\VetPlatform.API\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Usuario\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\winfl\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -2774,6 +2774,7 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -2781,11 +2782,11 @@
           "framework": "net8.0",
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Programacion\\PBI01_pro_manzanillo\\src\\VetPlatform.Application\\VetPlatform.Application.csproj": {
-              "projectPath": "C:\\Programacion\\PBI01_pro_manzanillo\\src\\VetPlatform.Application\\VetPlatform.Application.csproj"
+            "C:\\Users\\winfl\\Projects\\ProyectoImplementacionManzanilloUH\\src\\VetPlatform.Application\\VetPlatform.Application.csproj": {
+              "projectPath": "C:\\Users\\winfl\\Projects\\ProyectoImplementacionManzanilloUH\\src\\VetPlatform.Application\\VetPlatform.Application.csproj"
             },
-            "C:\\Programacion\\PBI01_pro_manzanillo\\src\\VetPlatform.Infrastructure\\VetPlatform.Infrastructure.csproj": {
-              "projectPath": "C:\\Programacion\\PBI01_pro_manzanillo\\src\\VetPlatform.Infrastructure\\VetPlatform.Infrastructure.csproj"
+            "C:\\Users\\winfl\\Projects\\ProyectoImplementacionManzanilloUH\\src\\VetPlatform.Infrastructure\\VetPlatform.Infrastructure.csproj": {
+              "projectPath": "C:\\Users\\winfl\\Projects\\ProyectoImplementacionManzanilloUH\\src\\VetPlatform.Infrastructure\\VetPlatform.Infrastructure.csproj"
             }
           }
         }
@@ -2825,6 +2826,24 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[8.0.31, 8.0.31]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.win-x64",
+            "version": "[8.0.31, 8.0.31]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[8.0.31, 8.0.31]"
+          },
+          {
+            "name": "Microsoft.WindowsDesktop.App.Ref",
+            "version": "[8.0.31, 8.0.31]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.AspNetCore.App": {
             "privateAssets": "none"

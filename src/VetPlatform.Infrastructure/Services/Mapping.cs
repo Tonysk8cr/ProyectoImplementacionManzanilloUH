@@ -33,5 +33,4 @@ internal static class Mapping
     public static OrderDto ToDto(this Order o) => new(o.Id, o.BuyerUserId, o.StoreId, o.Status.ToString(), o.CreatedAt, o.UpdatedAt, o.Notes, o.Total,
         o.Items.Select(i => new OrderItemDto(i.ProductId, i.ProductName, i.UnitPrice, i.Quantity, i.ReservedQuantity)).ToList());
     public static AvailabilitySlotDto ToDto(this AvailabilitySlot s) => new(s.Id, s.ClinicId, s.VetUserId, s.StartTime, s.EndTime, s.IsBooked);
-    public static AppointmentDto ToDto(this Appointment a) => new(a.Id, a.PetId, a.OwnerId, a.ClinicId, a.VetUserId, a.SlotId, a.CreatedAt, a.Status);
 }

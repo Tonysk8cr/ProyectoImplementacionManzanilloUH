@@ -1,0 +1,18 @@
+@model VetPlatform.Application.Features.Scheduling.AppointmentDto
+@{
+    ViewData["Title"] = "Cita confirmada";
+}
+
+<section class="card">
+    <h1>Cita registrada</h1>
+    <p class="lead">Este es el resumen de tu solicitud.</p>
+    <dl class="detail-list">
+        <div><dt>Veterinaria</dt><dd>@Model.ClinicName</dd></div>
+        <div><dt>Mascota</dt><dd>@Model.PetName</dd></div>
+        <div><dt>Fecha</dt><dd>@Model.StartTime.ToLocalTime().ToString("dd/MM/yyyy")</dd></div>
+        <div><dt>Hora</dt><dd>@Model.StartTime.ToLocalTime().ToString("HH:mm") - @Model.EndTime.ToLocalTime().ToString("HH:mm")</dd></div>
+        <div><dt>Motivo</dt><dd>@Model.Reason</dd></div>
+        <div><dt>Estado</dt><dd>@Model.Status</dd></div>
+    </dl>
+    <a class="btn btn-primary" asp-action="Index">Ir a mis citas</a>
+</section>

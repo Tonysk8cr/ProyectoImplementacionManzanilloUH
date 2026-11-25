@@ -7,4 +7,6 @@ public interface ISchedulingService
     Task<Result<IReadOnlyList<AvailabilitySlotDto>>> GetAvailabilityAsync(Guid? clinicId, Guid? vetId, DateOnly? date, CancellationToken ct = default);
     Task<Result<AppointmentDto>> BookAppointmentAsync(BookAppointmentCommand cmd, CancellationToken ct = default);
     Task<Result<IReadOnlyList<AppointmentDto>>> GetAppointmentsByPetAsync(Guid petId, CancellationToken ct = default);
+    Task<Result<AppointmentDto>> GetAppointmentAsync(Guid appointmentId, CancellationToken ct = default);
+    Task<Result<IReadOnlyList<AppointmentDto>>> GetAppointmentsForCurrentUserAsync(Guid? clinicId = null, CancellationToken ct = default);
 }

@@ -52,6 +52,12 @@ public class ClinicRepository : BaseRepository<Clinic>, IClinicRepository
     public ClinicRepository(AppDbContext db) : base(db) { }
     public Task<Clinic?> GetWithMembersAsync(Guid id, CancellationToken ct = default) =>
         Set.Include(c => c.Members).FirstOrDefaultAsync(c => c.Id == id, ct);
+    public async Task<IReadOnlyList<Clinic>> GetActiveAsync(CancellationToken ct = default) =>
+        await Set.Where(c => c.Status == ClinicStatus.Active).OrderBy(c => c.Name).ToListAsync(ct);
+    public async Task<IReadOnlyList<Clinic>> GetManagedByUserAsync(Guid userId, IReadOnlyCollection<Guid> organizationIds, bool platformAdmin, CancellationToken ct = default) =>
+        await Set.Where(c => c.Status == ClinicStatus.Active &&
+            (platformAdmin || c.RepresentativeUserId == userId || organizationIds.Contains(c.Id)))
+            .OrderBy(c => c.Name).ToListAsync(ct);
     public Task<ClinicMember?> GetActiveMemberAsync(Guid clinicId, Guid userId, CancellationToken ct = default) =>
         Db.ClinicMembers.FirstOrDefaultAsync(m => m.ClinicId == clinicId && m.UserId == userId && m.LeftAt == null, ct);
     public async Task AddMemberAsync(ClinicMember m, CancellationToken ct = default) => await Db.ClinicMembers.AddAsync(m, ct);
@@ -152,25 +158,80 @@ public class AvailabilitySlotRepository : BaseRepository<AvailabilitySlot>, IAva
         var q = Set.AsQueryable();
         if (clinicId.HasValue) q = q.Where(s => s.ClinicId == clinicId);
         if (vetUserId.HasValue) q = q.Where(s => s.VetUserId == vetUserId);
-        if (onlyFree) q = q.Where(s => !s.IsBooked);
-        var list = await q.ToListAsync(ct);
-        if (date.HasValue) list = list.Where(s => DateOnly.FromDateTime(s.StartTime.UtcDateTime) == date).ToList();
-        return list.OrderBy(s => s.StartTime).ToList();
+        q = q.Where(s =>
+            Db.Clinics.Any(c => c.Id == s.ClinicId && c.Status == ClinicStatus.Active) &&
+            Db.ClinicMembers.Any(m => m.ClinicId == s.ClinicId && m.UserId == s.VetUserId && m.LeftAt == null));
+        if (onlyFree) q = q.Where(s => !s.IsBooked &&
+            !Db.Appointments.Any(a => a.SlotId == s.Id && a.Status == Appointment.Statuses.Booked));
+        if (Db.Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
+        {
+            var slots = await q.ToListAsync(ct);
+            if (date.HasValue)
+                slots = slots.Where(s => DateOnly.FromDateTime(s.StartTime.UtcDateTime) == date.Value).ToList();
+            return slots.OrderBy(s => s.StartTime).ToList();
+        }
+        if (date.HasValue)
+        {
+            var start = new DateTimeOffset(date.Value.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc));
+            q = q.Where(s => s.StartTime >= start && s.StartTime < start.AddDays(1));
+        }
+        return await q.OrderBy(s => s.StartTime).ToListAsync(ct);
     }
     public async Task<bool> HasOverlapAsync(Guid vetUserId, DateTimeOffset start, DateTimeOffset end, CancellationToken ct = default)
     {
-        var slots = await Set.Where(s => s.VetUserId == vetUserId).ToListAsync(ct);
-        return slots.Any(s => s.StartTime < end && start < s.EndTime);
+        var q = Set.Where(s => s.VetUserId == vetUserId);
+        if (Db.Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
+        {
+            var slots = await q.ToListAsync(ct);
+            return slots.Any(s => s.StartTime < end && start < s.EndTime);
+        }
+        return await q.AnyAsync(s => s.StartTime < end && start < s.EndTime, ct);
     }
 }
 
 public class AppointmentRepository : BaseRepository<Appointment>, IAppointmentRepository
 {
     public AppointmentRepository(AppDbContext db) : base(db) { }
-    public async Task<IReadOnlyList<Appointment>> GetByPetAsync(Guid petId, CancellationToken ct = default) =>
-        await Set.Where(a => a.PetId == petId).ToListAsync(ct);
     public Task<bool> ExistsActiveForSlotAsync(Guid slotId, CancellationToken ct = default) =>
         Set.AnyAsync(a => a.SlotId == slotId && a.Status == Appointment.Statuses.Booked, ct);
+    public async Task<IReadOnlyList<AppointmentDetails>> SearchDetailsAsync(
+        Guid? appointmentId = null,
+        Guid? petId = null,
+        Guid? ownerId = null,
+        Guid? vetUserId = null,
+        Guid? clinicId = null,
+        IReadOnlyCollection<Guid>? clinicIds = null,
+        CancellationToken ct = default)
+    {
+        var appointments = Set.AsQueryable();
+        if (appointmentId.HasValue) appointments = appointments.Where(a => a.Id == appointmentId.Value);
+        if (petId.HasValue) appointments = appointments.Where(a => a.PetId == petId.Value);
+        if (ownerId.HasValue) appointments = appointments.Where(a => a.OwnerId == ownerId.Value);
+        if (vetUserId.HasValue) appointments = appointments.Where(a => a.VetUserId == vetUserId.Value);
+        if (clinicId.HasValue) appointments = appointments.Where(a => a.ClinicId == clinicId.Value);
+        if (clinicIds is not null) appointments = appointments.Where(a => clinicIds.Contains(a.ClinicId));
+
+        var details = await (from appointment in appointments
+                join pet in Db.Pets on appointment.PetId equals pet.Id
+                join clinic in Db.Clinics on appointment.ClinicId equals clinic.Id
+                join slot in Db.AvailabilitySlots on appointment.SlotId equals slot.Id
+                select new AppointmentDetails(
+                    appointment.Id,
+                    appointment.PetId,
+                    pet.Name,
+                    appointment.OwnerId,
+                    appointment.ClinicId,
+                    clinic.Name,
+                    appointment.VetUserId,
+                    appointment.SlotId,
+                    slot.StartTime,
+                    slot.EndTime,
+                    appointment.CreatedAt,
+                    appointment.Reason,
+                    appointment.Status)).ToListAsync(ct);
+
+        return details.OrderBy(a => a.StartTime).ToList();
+    }
 }
 
 public class NotificationRepository : BaseRepository<Notification>, INotificationRepository

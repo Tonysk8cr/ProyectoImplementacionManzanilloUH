@@ -1,0 +1,47 @@
+@baseUrl = http://localhost:5295
+@sessionCookie = .AspNetCore.Cookies=replace-with-session-cookie-value
+@antiforgeryCookie = .AspNetCore.Antiforgery.replace-with-cookie-name=replace-with-cookie-value
+@requestToken = replace-with-hidden-RequestVerificationToken-from-booking-form
+@clinicId = 00000000-0000-0000-0000-000000000001
+@petId = 00000000-0000-0000-0000-000000000002
+@slotId = 00000000-0000-0000-0000-000000000003
+@appointmentId = 00000000-0000-0000-0000-000000000004
+@date = 2026-12-01
+
+### Find future, unbooked veterinary slots
+GET {{baseUrl}}/api/availability?clinicId={{clinicId}}&date={{date}}
+Cookie: {{sessionCookie}}; {{antiforgeryCookie}}
+
+### Book a slot (the response includes Location for the appointment summary)
+POST {{baseUrl}}/api/appointments
+Cookie: {{sessionCookie}}; {{antiforgeryCookie}}
+RequestVerificationToken: {{requestToken}}
+Content-Type: application/json
+
+{
+  "clinicId": "{{clinicId}}",
+  "petId": "{{petId}}",
+  "slotId": "{{slotId}}",
+  "reason": "Consulta general"
+}
+
+### Repeating the booking returns 409 Conflict after the slot is taken
+POST {{baseUrl}}/api/appointments
+Cookie: {{sessionCookie}}; {{antiforgeryCookie}}
+RequestVerificationToken: {{requestToken}}
+Content-Type: application/json
+
+{
+  "clinicId": "{{clinicId}}",
+  "petId": "{{petId}}",
+  "slotId": "{{slotId}}",
+  "reason": "Consulta general"
+}
+
+### List appointments visible to the authenticated owner, vet, or clinic manager
+GET {{baseUrl}}/api/appointments/mine
+Cookie: {{sessionCookie}}; {{antiforgeryCookie}}
+
+### Read an authorized appointment summary
+GET {{baseUrl}}/api/appointments/{{appointmentId}}
+Cookie: {{sessionCookie}}; {{antiforgeryCookie}}

@@ -19,7 +19,21 @@ public class SchedulingController : ApiControllerBase
         ToActionResult(await _scheduling.GetAvailabilityAsync(clinicId, vetId, date, ct));
 
     [Authorize(Policy = AuthorizationPolicies.RequirePetOwner), HttpPost("api/appointments")]
-    public async Task<IActionResult> Book(BookAppointmentCommand cmd, CancellationToken ct) => ToActionResult(await _scheduling.BookAppointmentAsync(cmd, ct), 201);
+    public async Task<IActionResult> Book(BookAppointmentCommand cmd, CancellationToken ct)
+    {
+        var result = await _scheduling.BookAppointmentAsync(cmd, ct);
+        return result.Success && result.Value is not null
+            ? CreatedAtAction(nameof(GetAppointment), new { id = result.Value.Id }, result.Value)
+            : ToActionResult(result);
+    }
+
+    [HttpGet("api/appointments/mine")]
+    public async Task<IActionResult> Mine([FromQuery] Guid? clinicId, CancellationToken ct) =>
+        ToActionResult(await _scheduling.GetAppointmentsForCurrentUserAsync(clinicId, ct));
+
+    [HttpGet("api/appointments/{id:guid}")]
+    public async Task<IActionResult> GetAppointment(Guid id, CancellationToken ct) =>
+        ToActionResult(await _scheduling.GetAppointmentAsync(id, ct));
 
     [HttpGet("api/appointments")]
     public async Task<IActionResult> ByPet([FromQuery] Guid petId, CancellationToken ct) => ToActionResult(await _scheduling.GetAppointmentsByPetAsync(petId, ct));

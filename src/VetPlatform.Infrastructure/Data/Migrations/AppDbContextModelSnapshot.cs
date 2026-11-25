@@ -814,6 +814,11 @@ namespace VetPlatform.Infrastructure.Data.Migrations
                     b.Property<Guid>("PetId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
                     b.Property<Guid>("SlotId")
                         .HasColumnType("uuid");
 
@@ -827,11 +832,17 @@ namespace VetPlatform.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ClinicId");
+
+                    b.HasIndex("OwnerId");
+
                     b.HasIndex("PetId");
 
                     b.HasIndex("SlotId")
                         .IsUnique()
                         .HasFilter("\"Status\" = 'Booked'");
+
+                    b.HasIndex("VetUserId");
 
                     b.ToTable("Appointments");
                 });

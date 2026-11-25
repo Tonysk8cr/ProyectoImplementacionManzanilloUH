@@ -56,6 +56,8 @@ public class Sprint1FlowTests : IClassFixture<VetPlatformWebFactory>
         var registerResponse = await client.PostAsync("/Account/Register", Form(registerToken,
             ("FullName", "Juan Pérez"),
             ("Email", email),
+            ("IdentificationNumber", Guid.NewGuid().ToString("N")[..10]),
+            ("Phone", "88888888"),
             ("Password", "Secreta1"), ("ConfirmPassword", "Secreta1")));
 
         Assert.Equal(HttpStatusCode.Redirect, registerResponse.StatusCode);

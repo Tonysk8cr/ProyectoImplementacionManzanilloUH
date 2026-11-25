@@ -13,6 +13,8 @@ namespace VetPlatform.Domain.Interfaces.Repositories;
 public interface IClinicRepository : IBaseRepository<Clinic>
 {
     Task<Clinic?> GetWithMembersAsync(Guid id, CancellationToken ct = default);
+    Task<IReadOnlyList<Clinic>> GetActiveAsync(CancellationToken ct = default);
+    Task<IReadOnlyList<Clinic>> GetManagedByUserAsync(Guid userId, IReadOnlyCollection<Guid> organizationIds, bool platformAdmin, CancellationToken ct = default);
     Task<ClinicMember?> GetActiveMemberAsync(Guid clinicId, Guid userId, CancellationToken ct = default);
     Task AddMemberAsync(ClinicMember member, CancellationToken ct = default);
 }

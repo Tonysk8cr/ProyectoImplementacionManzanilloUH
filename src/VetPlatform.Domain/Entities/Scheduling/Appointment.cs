@@ -10,6 +10,7 @@ public class Appointment : BaseEntity
     public Guid VetUserId { get; set; }
     public Guid SlotId { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
+    public string Reason { get; set; } = string.Empty;
     public string Status { get; set; } = Statuses.Booked;
 
     public static class Statuses

@@ -1,0 +1,83 @@
+@model AppointmentBookingViewModel
+@{
+    ViewData["Title"] = "Agendar cita";
+}
+
+<div class="page-header">
+    <div>
+        <h1>Agendar cita veterinaria</h1>
+        <p class="lead">Elige la veterinaria, la mascota, el motivo y un horario disponible.</p>
+    </div>
+    <a class="btn" asp-action="Index">Mis citas</a>
+</div>
+
+<div asp-validation-summary="All" class="validation-summary"></div>
+
+<form asp-action="Book" method="get" class="card">
+    <h2 class="card-title">1. Selecciona veterinaria, mascota y fecha</h2>
+    <div class="form-group">
+        <label for="ClinicId">Veterinaria</label>
+        <select id="ClinicId" name="clinicId" required>
+            <option value="">Selecciona una veterinaria</option>
+            @foreach (var clinic in Model.Clinics)
+            {
+                <option value="@clinic.Id" selected="@(Model.ClinicId == clinic.Id)">@clinic.Name</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="PetId">Mascota</label>
+        <select id="PetId" name="petId" required>
+            <option value="">Selecciona una mascota</option>
+            @foreach (var pet in Model.Pets)
+            {
+                <option value="@pet.Id" selected="@(Model.PetId == pet.Id)">@pet.Name (@pet.Species)</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="Date">Fecha</label>
+        <input id="Date" name="date" type="date" value="@Model.Date?.ToString("yyyy-MM-dd")" required />
+    </div>
+    <button class="btn" type="submit">Buscar horarios disponibles</button>
+</form>
+
+@if (Model.ClinicId.HasValue && Model.Date.HasValue)
+{
+    <form asp-action="Book" method="post" class="card">
+        @Html.AntiForgeryToken()
+        <h2 class="card-title">2. Confirma la solicitud</h2>
+        <input asp-for="ClinicId" type="hidden" />
+        <input asp-for="PetId" type="hidden" />
+        <input asp-for="Date" type="hidden" />
+
+        <div class="form-group">
+            <label asp-for="Reason">Servicio o motivo de consulta</label>
+            <textarea asp-for="Reason" rows="3" maxlength="500" required placeholder="Ej. Vacunación, revisión general"></textarea>
+            <span asp-validation-for="Reason" class="field-validation-error"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="SlotId">Horario disponible</label>
+            <select asp-for="SlotId" required>
+                <option value="">Selecciona un horario</option>
+                @foreach (var slot in Model.Slots)
+                {
+                    <option value="@slot.Id">@slot.StartTime.ToLocalTime().ToString("HH:mm") - @slot.EndTime.ToLocalTime().ToString("HH:mm")</option>
+                }
+            </select>
+            <span asp-validation-for="SlotId" class="field-validation-error"></span>
+            @if (Model.Slots.Count == 0)
+            {
+                <p class="field-hint">No hay horarios disponibles para esta fecha. Selecciona otra fecha o veterinaria.</p>
+            }
+        </div>
+        @if (Model.Slots.Count > 0)
+        {
+            <button class="btn btn-primary" type="submit">Confirmar cita</button>
+        }
+        else
+        {
+            <button class="btn btn-primary" type="submit" disabled>Confirmar cita</button>
+        }
+    </form>
+}

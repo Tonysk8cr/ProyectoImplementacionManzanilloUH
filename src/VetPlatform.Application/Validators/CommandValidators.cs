@@ -85,7 +85,13 @@ public class BookAppointmentCommandValidator : AbstractValidator<BookAppointment
 {
     public BookAppointmentCommandValidator()
     {
-        RuleFor(x => x.PetId).NotEmpty();
-        RuleFor(x => x.SlotId).NotEmpty();
+        RuleFor(x => x.ClinicId).NotEmpty().WithMessage("Seleccione una veterinaria.");
+        RuleFor(x => x.PetId).NotEmpty().WithMessage("Seleccione una mascota.");
+        RuleFor(x => x.SlotId).NotEmpty().WithMessage("Seleccione una fecha y un horario disponible.");
+        RuleFor(x => x.Reason)
+            .Must(reason => !string.IsNullOrWhiteSpace(reason))
+            .WithMessage("Indique el motivo de la consulta.")
+            .MaximumLength(500)
+            .WithMessage("El motivo no puede superar los 500 caracteres.");
     }
 }
