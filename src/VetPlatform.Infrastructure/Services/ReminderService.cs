@@ -58,6 +58,7 @@ public class ReminderService(AppDbContext db, ICurrentUserService user, TimeProv
         if (appointment.OwnerId != user.UserId && appointment.VetUserId != user.UserId && !user.IsInRole(UserRole.PlatformAdmin))
             return Result<bool>.Forbidden();
         if (appointment.Status == Appointment.Statuses.Cancelled) return Result<bool>.Ok(true);
+        if (appointment.Status != Appointment.Statuses.Booked) return Result<bool>.Conflict("Solo se pueden cancelar citas reservadas.");
         appointment.Status = Appointment.Statuses.Cancelled;
         var slot = await db.AvailabilitySlots.FirstOrDefaultAsync(s => s.Id == appointment.SlotId, ct);
         if (slot != null) { slot.IsBooked = false; slot.Version++; }

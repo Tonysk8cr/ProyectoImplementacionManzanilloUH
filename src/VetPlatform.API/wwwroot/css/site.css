@@ -12,6 +12,9 @@
     --card-bg: #ffffff;
 }
 
+.appointment-table-wrap { overflow-x: auto; }
+.appointment-action { display: inline-block; margin: 0.25rem 0; }
+
 * {
     box-sizing: border-box;
 }
@@ -58,6 +61,7 @@ body {
 
 .nav-links {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 1rem;
 }

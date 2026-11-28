@@ -53,6 +53,7 @@ internal static class WebTestHelpers
         var (registerToken, _) = await GetFormAsync(client, "/Account/Register");
         await client.PostAsync("/Account/Register", Form(registerToken,
             ("FullName", "María López"),
+            ("IdentificationNumber", Guid.NewGuid().ToString("N")[..16]), ("Phone", "88888888"),
             ("Email", email),
             ("Password", "Secreta1"), ("ConfirmPassword", "Secreta1")));
 

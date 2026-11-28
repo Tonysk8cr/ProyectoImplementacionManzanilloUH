@@ -17,5 +17,7 @@ public class Appointment : BaseEntity
     {
         public const string Booked = "Booked";
         public const string Cancelled = "Cancelled";
+        public const string Completed = "Completed";
+        public const string NoShow = "NoShow";
     }
 }

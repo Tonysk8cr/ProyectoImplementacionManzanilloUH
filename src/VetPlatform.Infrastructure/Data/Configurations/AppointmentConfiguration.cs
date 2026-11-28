@@ -7,7 +7,8 @@ public class AppointmentConfiguration : IEntityTypeConfiguration<Appointment>
 {
     public void Configure(EntityTypeBuilder<Appointment> b)
     {
-        b.Property(x => x.Status).HasMaxLength(20);
+        b.Property(x => x.Status).HasMaxLength(20).IsConcurrencyToken();
+        b.Property(x => x.Reason).HasMaxLength(500).IsRequired();
         b.HasIndex(x => x.SlotId).IsUnique().HasFilter("[Status] = 'Booked'");
         b.HasIndex(x => x.PetId);
     }

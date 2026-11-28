@@ -13,7 +13,7 @@ namespace VetPlatform.Infrastructure.Data.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "Reason",
                 table: "Appointments",
-                type: "character varying(500)",
+                type: "nvarchar(500)",
                 maxLength: 500,
                 nullable: false,
                 defaultValue: "Consulta veterinaria");
