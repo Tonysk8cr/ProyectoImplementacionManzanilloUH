@@ -1,0 +1,51 @@
+@model ClinicAppointmentsViewModel
+@{ ViewData["Title"] = "Gestión de citas"; }
+<div class="page-header"><div><h1>Gestión de citas veterinarias</h1><p class="lead">Consulta y gestiona la agenda de tu clínica. Hora de Costa Rica (UTC-6).</p></div></div>
+<div asp-validation-summary="All" class="validation-summary" role="alert"></div>
+@if (Model.Clinics.Count == 0)
+{
+    <div class="empty-state"><p>No tienes clínicas asignadas para gestionar citas.</p></div>
+}
+else
+{
+    <form asp-action="Index" method="get" class="card">
+        <div class="grid">
+            <div class="form-group"><label asp-for="ClinicId">Clínica</label><select asp-for="ClinicId">
+                @foreach (var clinic in Model.Clinics) { <option value="@clinic.Id">@clinic.Name</option> }
+            </select></div>
+            <div class="form-group"><label asp-for="Date">Fecha</label><input asp-for="Date" type="date" /><span class="field-hint">Deja la fecha vacía para consultar todos los días.</span></div>
+            <div class="form-group"><label asp-for="Status">Estado</label><select asp-for="Status">
+                <option value="">Todos los estados</option><option value="Booked">Reservada</option><option value="Cancelled">Cancelada</option><option value="Completed">Completada</option><option value="NoShow">Ausente</option>
+            </select></div>
+        </div>
+        <input type="hidden" name="allDates" value="true" />
+        <button class="btn btn-primary" type="submit">Buscar citas</button>
+        <a class="btn" asp-action="Index" asp-route-clinicId="@Model.ClinicId">Ver agenda de hoy</a>
+    </form>
+    @if (Model.Appointments.Count == 0)
+    {
+        <div class="empty-state"><p>No hay citas para los filtros seleccionados.</p></div>
+    }
+    else
+    {
+        <p role="status">@Model.Appointments.Count cita(s) encontrada(s).</p>
+        <div class="appointment-table-wrap">
+            <table class="table"><caption>Citas de la clínica seleccionada</caption>
+                <thead><tr><th>Fecha</th><th>Hora</th><th>Mascota</th><th>Cliente</th><th>Veterinario</th><th>Motivo</th><th>Estado</th><th>Acciones</th></tr></thead>
+                <tbody>@foreach (var item in Model.Appointments)
+                {
+                    <tr><td>@item.StartTime.ToString("dd/MM/yyyy")</td><td>@item.StartTime.ToString("HH:mm")</td><td>@item.Pet</td><td>@item.Client</td><td>@item.Vet</td><td>@item.Reason</td><td>@ClinicAppointmentsViewModel.StatusLabel(item.Status)</td>
+                        <td><a class="btn" asp-action="Details" asp-route-id="@item.Id">Ver detalle</a>
+                            @foreach (var next in item.AllowedStatuses)
+                            {
+                                <form asp-action="ChangeStatus" method="post" class="appointment-action">
+                                    <input type="hidden" name="id" value="@item.Id" /><input type="hidden" name="status" value="@next" />
+                                    <button class="btn" type="submit">@ClinicAppointmentsViewModel.ActionLabel(next)</button>
+                                </form>
+                            }
+                        </td></tr>
+                }</tbody>
+            </table>
+        </div>
+    }
+}

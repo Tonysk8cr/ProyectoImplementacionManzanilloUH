@@ -55,6 +55,7 @@ public class Sprint1FlowTests : IClassFixture<VetPlatformWebFactory>
         var (registerToken, registerCookie) = await GetFormAsync(client, "/Account/Register");
         var registerResponse = await client.PostAsync("/Account/Register", Form(registerToken,
             ("FullName", "Juan Pérez"),
+            ("IdentificationNumber", Guid.NewGuid().ToString("N")[..16]), ("Phone", "88888888"),
             ("Email", email),
             ("Password", "Secreta1"), ("ConfirmPassword", "Secreta1")));
 

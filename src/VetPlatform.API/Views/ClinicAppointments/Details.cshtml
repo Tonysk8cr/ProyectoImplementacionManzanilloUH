@@ -1,0 +1,20 @@
+@model VetPlatform.Application.Features.Scheduling.ClinicAppointmentDto
+@{ ViewData["Title"] = "Detalle de cita"; }
+<div class="page-header"><h1>Detalle de cita</h1><a class="btn" asp-action="Index" asp-route-clinicId="@Model.ClinicId" asp-route-date="@Model.StartTime.ToString("yyyy-MM-dd")">Volver al listado</a></div>
+<div asp-validation-summary="All" class="validation-summary" role="alert"></div>
+<section class="card">
+    <dl>
+        <dt>Clínica</dt><dd>@Model.Clinic</dd><dt>Fecha</dt><dd>@Model.StartTime.ToString("dd/MM/yyyy")</dd>
+        <dt>Horario</dt><dd>@Model.StartTime.ToString("HH:mm") – @Model.EndTime.ToString("HH:mm") (Costa Rica, UTC-6)</dd>
+        <dt>Mascota</dt><dd>@Model.Pet</dd><dt>Cliente</dt><dd>@Model.Client</dd><dt>Veterinario</dt><dd>@Model.Vet</dd>
+        <dt>Motivo</dt><dd>@Model.Reason</dd><dt>Estado</dt><dd>@ClinicAppointmentsViewModel.StatusLabel(Model.Status)</dd>
+    </dl>
+    @foreach (var next in Model.AllowedStatuses)
+    {
+        <form asp-action="ChangeStatus" method="post" class="appointment-action">
+            <input type="hidden" name="id" value="@Model.Id" /><input type="hidden" name="status" value="@next" />
+            <button class="btn" type="submit">@ClinicAppointmentsViewModel.ActionLabel(next)</button>
+        </form>
+    }
+    @if (Model.AllowedStatuses.Count == 0) { <p class="field-hint">No hay acciones disponibles para el estado actual.</p> }
+</section>

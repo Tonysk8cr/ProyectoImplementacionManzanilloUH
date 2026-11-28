@@ -14,13 +14,13 @@ namespace VetPlatform.Infrastructure.Data.Migrations
             migrationBuilder.AddColumn<DateTimeOffset>(
                 name: "EventAt",
                 table: "Notifications",
-                type: "timestamp with time zone",
+                type: "datetimeoffset",
                 nullable: true);
 
             migrationBuilder.AddColumn<DateTimeOffset>(
                 name: "NotBefore",
                 table: "Notifications",
-                type: "timestamp with time zone",
+                type: "datetimeoffset",
                 nullable: true);
         }
 
